@@ -2,6 +2,7 @@ package com.loadfinder.app.domain.usecase
 
 import com.loadfinder.app.domain.model.Load
 import com.loadfinder.app.domain.model.SearchSettings
+import kotlin.math.roundToInt
 
 class MatchScoreCalculator {
     fun calculate(load: Load, settings: SearchSettings): Int {

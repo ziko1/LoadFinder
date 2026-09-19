@@ -151,7 +151,7 @@ fun HomeScreen(vm: HomeViewModel) {
 
 @Composable
 private fun LoadCard(load: Load, onClick: () -> Unit) {
-    Card(Modifier.fillMaxWidth(), onClick = onClick) {
+    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Text("${load.pickupCity} → ${load.deliveryCity}", style = MaterialTheme.typography.titleMedium)
             Text("€${"%.0f".format(load.priceEur)} • ${"%.2f".format(load.pricePerKm)} €/km")

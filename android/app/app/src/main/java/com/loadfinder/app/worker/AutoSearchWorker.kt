@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.loadfinder.app.data.repository.LoadRepository
 import com.loadfinder.app.settings.SearchSettingsStore
 import com.loadfinder.app.notifications.LoadNotificationHelper
+import com.loadfinder.app.notifications.NotificationCandidatePolicy
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException

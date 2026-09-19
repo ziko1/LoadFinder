@@ -1,5 +1,6 @@
 package com.loadfinder.app.data.api
 
+import com.loadfinder.app.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

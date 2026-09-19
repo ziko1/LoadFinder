@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.loadfinder.app.domain.model.Load
 
@@ -28,10 +29,12 @@ fun MapScreen(
             Text("📦 ${loads.size} matching loads")
             Canvas(Modifier.fillMaxSize().padding(12.dp)) {
                 drawCircle(
+                    color=Color(0xFF4CAF50),
                     radius=size.minDimension*0.42f,
                     center=Offset(size.width/2,size.height/2)
                 )
                 drawCircle(
+                    color=Color(0xFF1565C0),
                     radius=10f,
                     center=Offset(size.width/2,size.height/2)
                 )

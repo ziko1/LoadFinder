@@ -1,5 +1,6 @@
 package com.loadfinder.app.di
 
+import com.loadfinder.app.BuildConfig
 import com.loadfinder.app.data.exchange.BackendExchangeAdapter
 import com.loadfinder.app.data.exchange.ExchangeAdapter
 import com.loadfinder.app.data.exchange.MockExchangeAdapter

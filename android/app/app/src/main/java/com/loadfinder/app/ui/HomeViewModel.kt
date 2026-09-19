@@ -68,6 +68,8 @@ class HomeViewModel @Inject constructor(
     val pagedFlow: StateFlow<Flow<PagingData<Load>>> = _pagedFlow.asStateFlow()
     private val _searchContext = MutableStateFlow<SearchContext?>(null)
     val searchContext: StateFlow<SearchContext?> = _searchContext.asStateFlow()
+    private val _locationTracking = MutableStateFlow(false)
+    val locationTracking: StateFlow<Boolean> = _locationTracking.asStateFlow()
     private var pagingStarted = false
     private var contextRevision = 0L
     private var lastPagingLat: Double? = null

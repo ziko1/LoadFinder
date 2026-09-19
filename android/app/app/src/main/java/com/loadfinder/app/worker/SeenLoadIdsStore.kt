@@ -19,10 +19,12 @@ class SeenLoadIdsStore @Inject constructor(
     fun get(): Set<String> {
         val raw = prefs.getString(KEY_IDS, null) ?: return emptySet()
         return runCatching {
-            json.decodeFromString<List<String>>(raw)
+            val decoded: List<String> = json.decodeFromString(raw)
+            decoded
                 .asSequence()
                 .map(String::trim)
                 .filter(String::isNotEmpty)
+                .toList()
                 .takeLast(MAX_IDS)
                 .toSet()
         }.getOrElse { emptySet() }

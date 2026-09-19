@@ -2,6 +2,8 @@ package com.loadfinder.app.data.exchange
 
 import com.loadfinder.app.data.api.ApiLoad
 import com.loadfinder.app.data.api.BackendApi
+import com.loadfinder.app.data.api.ConfirmBody
+import com.loadfinder.app.data.api.OfferBody
 import com.loadfinder.app.domain.model.GeoPoint
 import com.loadfinder.app.domain.model.Load
 import javax.inject.Inject
@@ -77,13 +79,13 @@ class BackendExchangeAdapter @Inject constructor(
     override suspend fun submitOffer(loadId: String, amountEur: Double, confirmed: Boolean): Result<String> =
         runCatching {
             require(confirmed) { "EXPLICIT_CONFIRMATION_REQUIRED" }
-            api.offer(loadId, amountEur, confirmed = true)["offerId"].orEmpty()
+            api.offer(loadId, OfferBody(amountEur, confirmed = true))["offerId"].orEmpty()
         }
 
     override suspend fun acceptLoad(loadId: String, confirmed: Boolean): Result<String> =
         runCatching {
             require(confirmed) { "EXPLICIT_CONFIRMATION_REQUIRED" }
-            api.accept(loadId, confirmed = true)["bookingId"].orEmpty()
+            api.accept(loadId, ConfirmBody(confirmed = true))["bookingId"].orEmpty()
         }
 
     private fun mapLoad(x: ApiLoad) = Load(
