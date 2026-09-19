@@ -20,6 +20,6 @@ class V63PagingPrimaryUiTest {
     }
     @Test fun primary_ui_no_longer_exposes_manual_load_more_button() {
         val s = java.io.File("src/main/java/com/loadfinder/app/ui/HomeScreen.kt").readText()
-        assertTrue(!s.contains("Text("Load more")"))
+        assertTrue(!s.contains("Text(\"Load more\")"))
     }
 }

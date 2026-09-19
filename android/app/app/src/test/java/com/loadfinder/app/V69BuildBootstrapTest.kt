@@ -13,6 +13,6 @@ class V69BuildBootstrapTest {
     }
     @Test fun build_config_string_syntax_regression_is_absent() {
         val a = java.io.File("../build.gradle.kts").readText()
-        assertTrue(!a.contains("buildConfigField("String", "LOADFINDER_BASE_URL", """))
+        assertTrue(!a.contains("buildConfigField(\"String\", \"LOADFINDER_BASE_URL\", \"\""))
     }
 }
