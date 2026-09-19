@@ -30,7 +30,8 @@ dependencies {
     implementation("androidx.paging:paging-runtime:3.5.1")
     implementation("androidx.paging:paging-compose:3.5.1")
     implementation("com.google.firebase:firebase-messaging-ktx:24.1.2")
-    implementation("com.google.maps.android:maps-compose:8.4.0")
+    // 6.4.1 is compatible with this project's AGP 8.7 / compileSdk 35 toolchain.
+    implementation("com.google.maps.android:maps-compose:6.4.1")
     implementation("com.google.android.gms:play-services-maps:20.0.0")
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.activity:activity-compose:1.10.0")
