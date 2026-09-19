@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "noEmitOnError": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src/server.ts"
+  ],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/verify-*.mjs",
+    "src/**/run-*.mjs"
+  ]
+}

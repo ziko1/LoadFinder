@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: loadfinder
+      POSTGRES_USER: loadfinder
+      POSTGRES_PASSWORD: loadfinder
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/sql:/docker-entrypoint-initdb.d:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://loadfinder:loadfinder@postgres:5432/loadfinder
+      REDIS_URL: redis://redis:6379
+      PORT: 8080
+      AUTH_JWKS_URL: ${AUTH_JWKS_URL:?AUTH_JWKS_URL is required}
+      AUTH_ISSUER: ${AUTH_ISSUER:-}
+      AUTH_AUDIENCE: ${AUTH_AUDIENCE:-}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?TOKEN_ENCRYPTION_KEY is required}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: ./backend
+    command: npm run worker:v17
+    environment:
+      DATABASE_URL: postgresql://loadfinder:loadfinder@postgres:5432/loadfinder
+      REDIS_URL: redis://redis:6379
+      AUTO_SEARCH_INTERVAL_MS: 5000
+      AUTO_SEARCH_BATCH: 100
+      AUTO_SEARCH_STALE_POSITION_MINUTES: 30
+      AUTH_JWKS_URL: ${AUTH_JWKS_URL:?AUTH_JWKS_URL is required}
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  pgdata:

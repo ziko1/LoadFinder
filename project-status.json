@@ -1,0 +1,43 @@
+{
+  "baseline": "v43",
+  "release_goal": "production",
+  "done": [
+    "android_auto_search",
+    "gps",
+    "durable_notifications",
+    "backend_loads_endpoint",
+    "backend_adapter",
+    "mock_explicit_only",
+    "auth_transport",
+    "rate_limiting",
+    "postgres_postgis_schema",
+    "authenticated_loads_endpoint",
+    "production_compose_healthchecks",
+    "nginx_production_template",
+    "versioned_db_migration_runner",
+    "migration_before_api_worker",
+    "production_runbook",
+    "driver_location_schema_alignment",
+    "android_keystore_token_storage",
+    "v47_regression_contracts"
+  ],
+  "partial": [
+    "trans_eu_oauth_skeleton",
+    "backend_production_observability",
+    "trans_eu_live_credentials",
+    "https_actual_host_deployment",
+    "db_backup_restore_rehearsal"
+  ],
+  "todo": [
+    "live_exchange_api",
+    "production_auth_flow",
+    "db_migrations",
+    "gdpr_workflows",
+    "secret_management",
+    "https_deployment",
+    "dependency_clean_builds",
+    "signed_android_release",
+    "device_runtime_test"
+  ],
+  "next": "oidc_login_refresh_and_first_live_exchange"
+}

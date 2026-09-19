@@ -1,0 +1,56 @@
+name: LoadFinder Android Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "android/**"
+      - ".github/workflows/android-build.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Verify project entrypoint
+        run: |
+          test -f settings.gradle.kts
+          test -f build.gradle.kts
+          test -f app/app/build.gradle.kts
+          test -f app/app/src/main/AndroidManifest.xml
+          test -x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Run unit tests
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: loadfinder-debug-apk
+          path: android/app/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Upload unit-test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: loadfinder-unit-test-reports
+          path: android/app/app/build/reports/tests/testDebugUnitTest/**
+          if-no-files-found: warn

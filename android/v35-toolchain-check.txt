@@ -1,0 +1,3 @@
+Toolchain check
+openjdk version "21.0.11" 2026-04-21
+ANDROID_HOME=

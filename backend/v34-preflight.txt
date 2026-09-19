@@ -1,0 +1,11 @@
+Missing installed dependencies (10):
+- fastify
+- @fastify/cors
+- pg
+- ioredis
+- zod
+- @types/node
+- @types/pg
+- tsx
+- typescript
+- vitest
