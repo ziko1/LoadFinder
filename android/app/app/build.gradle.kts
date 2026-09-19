@@ -12,6 +12,15 @@ android {
     namespace = "com.loadfinder.app"
     compileSdk = 35
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     defaultConfig {
         manifestPlaceholders["MAPS_API_KEY"] = project.findProperty("MAPS_API_KEY") ?: ""
         buildConfigField("String", "LOADFINDER_BASE_URL", "\"${project.findProperty("LOADFINDER_BASE_URL") ?: ""}\"")
