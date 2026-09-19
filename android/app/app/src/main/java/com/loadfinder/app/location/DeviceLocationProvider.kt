@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -15,7 +16,7 @@ import javax.inject.Inject
 data class DeviceLocation(val lat: Double, val lon: Double)
 
 class DeviceLocationProvider @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) {
     private val client: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
