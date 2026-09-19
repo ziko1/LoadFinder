@@ -28,8 +28,8 @@ class LoadRepositoryTest {
                 load("too-cheap", 20.0, 20.0, 0.8)
             )
             override suspend fun getLoadDetails(loadId: String) = null
-            override suspend fun submitOffer(loadId: String, amountEur: Double) = Result.success("x")
-            override suspend fun acceptLoad(loadId: String) = Result.success("x")
+            override suspend fun submitOffer(loadId: String, amountEur: Double, confirmed: Boolean) = Result.success("x")
+            override suspend fun acceptLoad(loadId: String, confirmed: Boolean) = Result.success("x")
         }
         val repo = LoadRepository(setOf(adapter), MatchScoreCalculator())
         val result = repo.search(52.52, 13.405, SearchSettings(minPricePerKm = 1.2, maxEmptyKm = 50.0, minMatchScore = 0))

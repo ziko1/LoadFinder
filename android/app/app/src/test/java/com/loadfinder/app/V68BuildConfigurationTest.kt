@@ -5,7 +5,7 @@ import org.junit.Test
 
 class V68BuildConfigurationTest {
     @Test fun ksp_and_critical_dependencies_are_declared() {
-        val app = java.io.File("../build.gradle.kts").readText()
+        val app = java.io.File("build.gradle.kts").readText()
         assertTrue(app.contains("com.google.devtools.ksp"))
         assertTrue(app.contains("androidx.paging:paging-runtime:3.5.1"))
         assertTrue(app.contains("androidx.paging:paging-compose:3.5.1"))
@@ -14,7 +14,7 @@ class V68BuildConfigurationTest {
     }
 
     @Test fun build_config_string_is_kotlin_dsl_safe() {
-        val app = java.io.File("../build.gradle.kts").readText()
+        val app = java.io.File("build.gradle.kts").readText()
         assertTrue(app.contains("buildConfigField(\"String\", \"LOADFINDER_BASE_URL\""))
         assertTrue(!app.contains("buildConfigField(\"String\", \"LOADFINDER_BASE_URL\", \"\""))
     }

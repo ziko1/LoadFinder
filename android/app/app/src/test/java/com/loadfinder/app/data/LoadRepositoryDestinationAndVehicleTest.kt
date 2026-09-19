@@ -31,8 +31,8 @@ class LoadRepositoryDestinationAndVehicleTest {
                     load("wrong-vehicle", "Hamburg", "TRUCK")
                 )
             override suspend fun getLoadDetails(loadId: String) = null
-            override suspend fun submitOffer(loadId: String, amountEur: Double) = Result.success("x")
-            override suspend fun acceptLoad(loadId: String) = Result.success("x")
+            override suspend fun submitOffer(loadId: String, amountEur: Double, confirmed: Boolean) = Result.success("x")
+            override suspend fun acceptLoad(loadId: String, confirmed: Boolean) = Result.success("x")
         }
         val repo = LoadRepository(setOf(adapter), MatchScoreCalculator())
         val result = repo.search(

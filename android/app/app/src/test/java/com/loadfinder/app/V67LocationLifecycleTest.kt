@@ -22,8 +22,8 @@ class V67LocationLifecycleTest {
         assertTrue(vm.contains("Settings.ACTION_LOCATION_SOURCE_SETTINGS"))
     }
     @Test fun foreground_service_contract_is_declared() {
-        val m = java.io.File("../main/AndroidManifest.xml").readText()
+        val m = java.io.File("src/main/AndroidManifest.xml").readText()
         assertTrue(m.contains("FOREGROUND_SERVICE_LOCATION"))
-        assertTrue(m.contains("android:foregroundServiceType="location""))
+        assertTrue(m.contains("android:foregroundServiceType=\"location\""))
     }
 }
