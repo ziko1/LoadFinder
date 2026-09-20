@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { pool } from './db';
+import { pool, ensureDriver } from './db';
 import { authenticate } from './v13';
 
 const Location = z.object({
@@ -16,6 +16,7 @@ export function registerV19(app: FastifyInstance) {
       const user = await authenticate(req);
       const b = Location.parse(req.body ?? {});
       if (!process.env.DATABASE_URL) return reply.code(503).send({ error: 'database_required' });
+      await ensureDriver(user.driverId);
       const capturedAt = b.capturedAt ? new Date(b.capturedAt) : new Date();
       if (capturedAt.getTime() > Date.now() + 60_000) {
         return reply.code(400).send({ error: 'future_timestamp_not_allowed' });

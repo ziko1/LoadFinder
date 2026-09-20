@@ -3,6 +3,8 @@ import type {FastifyInstance, FastifyRequest} from 'fastify';
 import {Pool} from 'pg';
 import Redis from 'ioredis';
 import {config} from './config';
+import {z} from 'zod';
+import {V14Persistence} from './v14Persistence';
 
 export type User={sub:string;driverId:string};
 
@@ -84,8 +86,9 @@ export class PgRepo{
 
 export function registerV13(app:FastifyInstance){
   const repo=config.databaseUrl?new PgRepo():undefined;
+  const pushPersistence=config.databaseUrl?new V14Persistence():undefined;
   const limiter=new RedisRateLimiter();
-  app.addHook('onClose',async()=>{limiter.close();await repo?.pool.end();});
+  app.addHook('onClose',async()=>{limiter.close();await repo?.pool.end();await pushPersistence?.pool.end();});
   app.decorateRequest('lfUser',null);
   app.addHook('onRequest',async(req,reply)=>{
     const path=req.url.split('?')[0];
@@ -111,11 +114,11 @@ export function registerV13(app:FastifyInstance){
   });
   app.post<{Body:{token:string;platform?:string}}>( '/v13/push-token',async(req,reply)=>{
     const u=(req as any).lfUser as User;
-    if(!req.body?.token) return reply.code(400).send({error:'token_required'});
-    if(!repo) return reply.code(503).send({error:'database_required'});
-    const id=await repo.ensureDriver(u.driverId);
-    await repo.pool.query(`insert into push_tokens(driver_id,token,platform) values($1,$2,$3) on conflict(driver_id,token) do update set last_seen_at=now()`,[id,req.body.token,req.body.platform??'android']);
-    return {ok:true,driverId:u.driverId,platform:req.body.platform??'android'};
+    const parsed=z.object({token:z.string().min(10).max(4096),platform:z.literal('android').default('android')}).safeParse(req.body);
+    if(!parsed.success) return reply.code(400).send({error:'invalid_push_token'});
+    if(!pushPersistence) return reply.code(503).send({error:'database_required'});
+    await pushPersistence.savePushToken(u.driverId,parsed.data.token,parsed.data.platform);
+    return {ok:true,driverId:u.driverId,platform:parsed.data.platform};
   });
   app.post<{Body:{action:string;entityId:string;idempotencyKey?:string;metadata?:unknown}}>( '/v13/audit',async(req,reply)=>{
     const u=(req as any).lfUser as User; if(!repo)return reply.code(503).send({error:'database_required'});

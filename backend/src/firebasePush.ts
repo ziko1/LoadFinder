@@ -8,13 +8,13 @@ export class FirebasePushGateway implements PushGateway {
   async send(driverId:string,payload:PushPayload){
     if(process.env.PUSH_PROVIDER!=='firebase') throw new Error('PUSH_NOT_CONFIGURED');
     if(!getApps().length)initializeApp({credential:applicationDefault()});
-    const rows=await this.pool.query('select token from push_tokens where driver_id=$1 and platform=$2',[driverId,'android']);
+    const rows=await this.pool.query('select p.token,d.external_subject from push_tokens p join drivers d on d.id=p.driver_id where p.driver_id=$1 and p.platform=$2',[driverId,'android']);
     const tokens=rows.rows.map(r=>String(r.token));
     if(!tokens.length) throw new Error('NO_PUSH_TOKENS');
     let successes=0;
     for(let start=0;start<tokens.length;start+=500){
       const batch=tokens.slice(start,start+500);
-      const result=await getMessaging().sendEachForMulticast({tokens:batch,data:{...payload},android:{priority:'high',ttl:900000}});
+      const result=await getMessaging().sendEachForMulticast({tokens:batch,data:{...payload,recipient:String(rows.rows[0].external_subject)},android:{priority:'high',ttl:900000}});
       successes+=result.successCount;
       for(let i=0;i<result.responses.length;i++){
         if(result.responses[i].error?.code==='messaging/registration-token-not-registered'){

@@ -18,6 +18,7 @@ class LoadFinderFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         if(!session.signedIn.value) return
         val data = message.data
+        if(data["recipient"] != session.subject()) return
         val id = data["loadId"] ?: return
         LoadNotificationHelper.notifyLoad(this, id, data["title"] ?: "LoadFinder", data["body"] ?: "Новий вантаж")
     }

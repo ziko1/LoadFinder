@@ -1,5 +1,11 @@
 # LoadFinder v2
 
+**Current setup and release instructions: [docs/RUNNING.md](docs/RUNNING.md).**
+The repository contains the complete Android and backend sources. Automated builds,
+API isolation tests, clean PostgreSQL migrations and Redis integration are configured
+in GitHub Actions. Live operation still requires your OIDC, Trans.eu, Firebase,
+Maps and deployment configuration. A green debug build is not a deployed release.
+
 Production-oriented foundation:
 - Android Kotlin/Compose client
 - Node.js + TypeScript + Fastify backend
@@ -29,8 +35,8 @@ cd ../android
 ./gradlew :app:assembleDebug :app:testDebugUnitTest
 ```
 
-For local Android configuration, add `MAPS_API_KEY` and
-`LOADFINDER_BASE_URL` to `android/gradle.properties` or pass them as Gradle
+For local Android configuration, add `MAPS_API_KEY`, `OIDC_ISSUER`,
+`OIDC_CLIENT_ID` and `LOADFINDER_BASE_URL` to `~/.gradle/gradle.properties` or pass them as Gradle
 properties. Never commit real keys, tokens, `.env` files, keystores, or
 `google-services.json`.
 

@@ -42,6 +42,33 @@ android {
         versionName = "0.21.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        create("production") {
+            System.getenv("LOADFINDER_KEYSTORE")?.let { storeFile = file(it) }
+            storePassword = System.getenv("LOADFINDER_STORE_PASSWORD")
+            keyAlias = System.getenv("LOADFINDER_KEY_ALIAS")
+            keyPassword = System.getenv("LOADFINDER_KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        getByName("release") { signingConfig = signingConfigs.getByName("production") }
+    }
+}
+
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    doFirst {
+        val apiUrl = project.findProperty("LOADFINDER_BASE_URL")?.toString().orEmpty()
+        val issuer = project.findProperty("OIDC_ISSUER")?.toString().orEmpty()
+        require(apiUrl.startsWith("https://") && issuer.startsWith("https://")) { "Release requires HTTPS API and OIDC issuer URLs" }
+        require(!project.findProperty("OIDC_CLIENT_ID")?.toString().isNullOrBlank()) { "OIDC_CLIENT_ID is required" }
+        require(project.findProperty("LOADFINDER_USE_MOCK")?.toString() != "true") { "Mock data is forbidden in release builds" }
+        require(!project.findProperty("MAPS_API_KEY")?.toString().isNullOrBlank()) { "MAPS_API_KEY is required for release" }
+        require(file("google-services.json").exists()) { "Firebase Android configuration is required for release" }
+        listOf("LOADFINDER_KEYSTORE", "LOADFINDER_STORE_PASSWORD", "LOADFINDER_KEY_ALIAS", "LOADFINDER_KEY_PASSWORD").forEach {
+            require(!System.getenv(it).isNullOrBlank()) { "$it is required to sign the release" }
+        }
+    }
 }
 
 dependencies {

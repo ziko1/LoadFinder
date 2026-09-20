@@ -1,0 +1,7 @@
+# Copy values to ~/.gradle/gradle.properties (never commit real values).
+LOADFINDER_BASE_URL=https://api.example.com/
+OIDC_ISSUER=https://identity.example.com/realms/loadfinder
+OIDC_CLIENT_ID=loadfinder-android
+OIDC_SCOPES=openid profile offline_access
+MAPS_API_KEY=configure-an-Android-restricted-key
+LOADFINDER_USE_MOCK=false

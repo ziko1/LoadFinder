@@ -29,6 +29,11 @@ class OidcSession @Inject constructor(
     private fun readState() = store.getAuthState()?.let { runCatching { AuthState.jsonDeserialize(it) }.getOrNull() }
     private val _signedIn = MutableStateFlow(readState()?.isAuthorized == true)
     val signedIn = _signedIn.asStateFlow()
+    fun subject(): String? = runCatching {
+        val token = readState()?.accessToken ?: return null
+        val claims = String(android.util.Base64.decode(token.split('.')[1], android.util.Base64.URL_SAFE), Charsets.UTF_8)
+        org.json.JSONObject(claims).optString("sub").takeIf { it.isNotBlank() }
+    }.getOrNull()
     val configured get() = BuildConfig.OIDC_ISSUER.startsWith("https://") && BuildConfig.OIDC_CLIENT_ID.isNotBlank()
 
     suspend fun loginIntent(): Intent = withContext(Dispatchers.Main) {
