@@ -13,11 +13,18 @@ export class V14Persistence {
   }
   async savePushToken(externalSubject: string, token: string, platform="android") {
     const driverId = await this.driverUuid(externalSubject);
-    await this.pool.query(
+    const client=await this.pool.connect();
+    try {
+      await client.query('begin');
+      await client.query('select pg_advisory_xact_lock(hashtext($1))',[token]);
+      await client.query('delete from push_tokens where token=$1 and driver_id<>$2',[token,driverId]);
+      await client.query(
       `insert into push_tokens(driver_id,token,platform,last_seen_at) values($1,$2,$3,now())
        on conflict(driver_id,token) do update set platform=excluded.platform,last_seen_at=now()`,
       [driverId, token, platform]
-    );
+      );
+      await client.query('commit');
+    }catch(e){await client.query('rollback');throw e;}finally{client.release();}
   }
   async recentLoads(limit=100) {
     const r=await this.pool.query(

@@ -73,7 +73,19 @@ data class ConfirmBody(val confirmed:Boolean)
 @Serializable
 data class OfferBody(val amountEur:Double,val confirmed:Boolean)
 
+@Serializable data class PushTokenBody(val token: String, val platform: String = "android")
+@Serializable data class ConnectionUrl(val url: String)
+@Serializable data class ExchangeStatus(val configured: Boolean, val connected: Boolean)
+
 interface BackendApi {
+    @POST("v1/exchanges/trans-eu/connect-url")
+    suspend fun connectExchange(): ConnectionUrl
+    @GET("v1/exchanges/trans-eu/status")
+    suspend fun exchangeStatus(): ExchangeStatus
+    @POST("v14/push-token")
+    suspend fun registerPush(@Body body: PushTokenBody)
+    @POST("v14/push-token/remove")
+    suspend fun removePush(@Body body: PushTokenBody)
     @GET("v1/exchanges/trans-eu/proposals")
     suspend fun transEuProposals(
         @Query("page") page: Int = 1,
@@ -91,7 +103,9 @@ interface BackendApi {
         @Query("minMatchScore") minMatchScore: Int,
         @Query("vehicleType") vehicleType: String,
         @Query("page") page: Int = 1,
-        @Query("pageSize") pageSize: Int = 25
+        @Query("pageSize") pageSize: Int = 25,
+        @Query("minPriceEur") minPriceEur: Double = 0.0,
+        @Query("destination") destination: String? = null
     ): ApiLoadsPage
 
     @GET("v1/loads/{id}")

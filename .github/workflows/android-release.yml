@@ -1,0 +1,49 @@
+name: Signed Android release
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      ORG_GRADLE_PROJECT_LOADFINDER_BASE_URL: ${{ vars.LOADFINDER_BASE_URL }}
+      ORG_GRADLE_PROJECT_OIDC_ISSUER: ${{ vars.OIDC_ISSUER }}
+      ORG_GRADLE_PROJECT_OIDC_CLIENT_ID: ${{ vars.OIDC_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+      LOADFINDER_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+      LOADFINDER_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      LOADFINDER_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Materialize build credentials
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          FIREBASE_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          test -n "$KEYSTORE_BASE64"
+          test -n "$FIREBASE_JSON"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/loadfinder-release.jks"
+          printf '%s' "$FIREBASE_JSON" > android/app/app/google-services.json
+          echo "LOADFINDER_KEYSTORE=$RUNNER_TEMP/loadfinder-release.jks" >> "$GITHUB_ENV"
+      - name: Test and build signed APK and bundle
+        working-directory: android
+        run: ./gradlew :app:testDebugUnitTest :app:assembleRelease :app:bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loadfinder-signed-release
+          if-no-files-found: error
+          path: |
+            android/app/app/build/outputs/apk/release/*.apk
+            android/app/app/build/outputs/bundle/release/*.aab
+      - name: Remove temporary credentials
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/loadfinder-release.jks"
+          rm -f android/app/app/google-services.json

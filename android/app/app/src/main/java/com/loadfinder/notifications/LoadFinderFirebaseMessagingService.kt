@@ -2,38 +2,24 @@ package com.loadfinder.notifications
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.loadfinder.app.domain.model.GeoPoint
-import com.loadfinder.app.domain.model.Load
+import com.loadfinder.app.auth.OidcSession
 import com.loadfinder.app.notifications.LoadNotificationHelper
+import com.loadfinder.app.notifications.PushRegistration
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoadFinderFirebaseMessagingService : FirebaseMessagingService() {
+    @Inject lateinit var registration: PushRegistration
+    @Inject lateinit var session: OidcSession
     override fun onNewToken(token: String) {
-        // Send the token only after an authenticated driver session exists.
+        if(session.signedIn.value) registration.schedule()
     }
-
     override fun onMessageReceived(message: RemoteMessage) {
+        if(!session.signedIn.value) return
         val data = message.data
-        val id = data["id"] ?: return
-        val pickup = data["pickup"] ?: return
-        val delivery = data["delivery"] ?: return
-        val price = data["priceEur"]?.toDoubleOrNull() ?: return
-        val load = Load(
-            id = id,
-            exchange = data["exchange"] ?: "BACKEND",
-            pickupCity = pickup,
-            pickup = GeoPoint(0.0, 0.0),
-            deliveryCity = delivery,
-            delivery = GeoPoint(0.0, 0.0),
-            weightKg = data["weightKg"]?.toIntOrNull() ?: 0,
-            volumeM3 = data["volumeM3"]?.toDoubleOrNull() ?: 0.0,
-            vehicleType = data["vehicleType"] ?: "",
-            priceEur = price,
-            distanceKm = data["distanceKm"]?.toDoubleOrNull() ?: 0.0,
-            pickupDistanceKm = data["pickupDistanceKm"]?.toDoubleOrNull() ?: 0.0,
-            emptyDistanceKm = data["emptyDistanceKm"]?.toDoubleOrNull() ?: 0.0,
-            pricePerKm = data["pricePerKm"]?.toDoubleOrNull() ?: 0.0,
-            matchScore = data["matchScore"]?.toIntOrNull() ?: 0
-        )
-        LoadNotificationHelper.notifyNewMatches(this, listOf(load))
+        if(data["recipient"] != session.subject()) return
+        val id = data["loadId"] ?: return
+        LoadNotificationHelper.notifyLoad(this, id, data["title"] ?: "LoadFinder", data["body"] ?: "Новий вантаж")
     }
 }

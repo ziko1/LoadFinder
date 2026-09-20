@@ -27,7 +27,9 @@ class LoadPagingSource(
                 minMatchScore = settings.minMatchScore,
                 vehicleType = settings.vehicleType,
                 page = page,
-                pageSize = pageSize.coerceIn(1, 50)
+                pageSize = pageSize.coerceIn(1, 50),
+                minPriceEur = settings.minPriceEur,
+                destination = settings.destination
             )
             val items = response.items.map { x ->
                 Load(

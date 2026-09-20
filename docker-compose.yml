@@ -1,50 +1,97 @@
 services:
   postgres:
     image: postgis/postgis:16-3.4
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: loadfinder
-      POSTGRES_USER: loadfinder
-      POSTGRES_PASSWORD: loadfinder
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${POSTGRES_DB:?required}
+      POSTGRES_USER: ${POSTGRES_USER:?required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./backend/sql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  migrate:
+    build:
+      context: ./backend
+    command: ["npm", "run", "migrate"]
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   api:
-    build: ./backend
+    build:
+      context: ./backend
+    restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://loadfinder:loadfinder@postgres:5432/loadfinder
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
       PORT: 8080
-      AUTH_JWKS_URL: ${AUTH_JWKS_URL:?AUTH_JWKS_URL is required}
-      AUTH_ISSUER: ${AUTH_ISSUER:-}
-      AUTH_AUDIENCE: ${AUTH_AUDIENCE:-}
-      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?TOKEN_ENCRYPTION_KEY is required}
+      AUTH_JWKS_URL: ${AUTH_JWKS_URL:?required}
+      AUTH_ISSUER: ${AUTH_ISSUER:?required}
+      AUTH_AUDIENCE: ${AUTH_AUDIENCE:?required}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?required}
+      TRANS_EU_API_KEY: ${TRANS_EU_API_KEY:-}
+      TRANS_EU_CLIENT_ID: ${TRANS_EU_CLIENT_ID:-}
+      TRANS_EU_CLIENT_SECRET: ${TRANS_EU_CLIENT_SECRET:-}
+      TRANS_EU_REDIRECT_URI: ${TRANS_EU_REDIRECT_URI:-}
+      AUTO_BID_LIVE: "false"
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   worker:
-    build: ./backend
-    command: npm run worker:v17
+    build:
+      context: ./backend
+    command: ["npm", "run", "worker:v17"]
+    restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://loadfinder:loadfinder@postgres:5432/loadfinder
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
-      AUTO_SEARCH_INTERVAL_MS: 5000
-      AUTO_SEARCH_BATCH: 100
-      AUTO_SEARCH_STALE_POSITION_MINUTES: 30
-      AUTH_JWKS_URL: ${AUTH_JWKS_URL:?AUTH_JWKS_URL is required}
+      AUTO_SEARCH_INTERVAL_MS: ${AUTO_SEARCH_INTERVAL_MS:-5000}
+      AUTO_SEARCH_BATCH: ${AUTO_SEARCH_BATCH:-100}
+      AUTO_SEARCH_STALE_POSITION_MINUTES: ${AUTO_SEARCH_STALE_POSITION_MINUTES:-30}
+      AUTH_JWKS_URL: ${AUTH_JWKS_URL:?required}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?required}
+      TRANS_EU_API_KEY: ${TRANS_EU_API_KEY:-}
+      TRANS_EU_CLIENT_ID: ${TRANS_EU_CLIENT_ID:-}
+      TRANS_EU_CLIENT_SECRET: ${TRANS_EU_CLIENT_SECRET:-}
+      PUSH_PROVIDER: ${PUSH_PROVIDER:-disabled}
+      AUTO_BID_LIVE: "false"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   pgdata:
+  redisdata:

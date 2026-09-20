@@ -8,7 +8,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ../backend/sql:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -48,8 +47,8 @@ services:
       REDIS_URL: redis://redis:6379
       PORT: 8080
       AUTH_JWKS_URL: ${AUTH_JWKS_URL:?required}
-      AUTH_ISSUER: ${AUTH_ISSUER:-}
-      AUTH_AUDIENCE: ${AUTH_AUDIENCE:-}
+      AUTH_ISSUER: ${AUTH_ISSUER:?required}
+      AUTH_AUDIENCE: ${AUTH_AUDIENCE:?required}
       TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?required}
       TRANS_EU_API_KEY: ${TRANS_EU_API_KEY:-}
       TRANS_EU_CLIENT_ID: ${TRANS_EU_CLIENT_ID:-}
@@ -80,6 +79,10 @@ services:
       AUTO_SEARCH_STALE_POSITION_MINUTES: ${AUTO_SEARCH_STALE_POSITION_MINUTES:-30}
       AUTH_JWKS_URL: ${AUTH_JWKS_URL:?required}
       TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?required}
+      TRANS_EU_API_KEY: ${TRANS_EU_API_KEY:-}
+      TRANS_EU_CLIENT_ID: ${TRANS_EU_CLIENT_ID:-}
+      TRANS_EU_CLIENT_SECRET: ${TRANS_EU_CLIENT_SECRET:-}
+      PUSH_PROVIDER: ${PUSH_PROVIDER:-disabled}
       AUTO_BID_LIVE: "false"
     depends_on:
       postgres:

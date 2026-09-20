@@ -21,10 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.loadfinder.app.domain.model.Load
 
 @Composable
-fun HomeScreen(vm: HomeViewModel) {
+fun HomeScreen(vm: HomeViewModel, onMap: (Load) -> Unit = {}) {
     val state by vm.state.collectAsState()
     val pagedFlow by vm.pagedFlow.collectAsState()
     val pagedItems = pagedFlow.collectAsLazyPagingItems()
+    val searchContext by vm.searchContext.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
     var locationPermissionGranted by remember { mutableStateOf(vm.hasLocationPermission()) }
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -82,7 +83,7 @@ fun HomeScreen(vm: HomeViewModel) {
                 onClick = { vm.startPagedSearch() },
                 enabled = locationPermissionGranted
             ) {
-                Text("Search all exchanges")
+                Text("Пошук на Trans.eu")
             }
 
             OutlinedButton(
@@ -112,6 +113,10 @@ fun HomeScreen(vm: HomeViewModel) {
 
         item {
             Text("📦 Smart results: ${pagedItems.itemCount}", style = MaterialTheme.typography.titleMedium)
+            state.actionMessage?.let { Text(it) }
+        }
+        if(searchContext == null) {
+            items(state.loads, key = { "saved:" + it.id }) { load -> LoadCard(load) { vm.openDetails(load) } }
         }
         items(pagedItems.itemCount, key = pagedItems.itemKey { it.id }) { index ->
             pagedItems[index]?.let { load ->
@@ -143,6 +148,7 @@ fun HomeScreen(vm: HomeViewModel) {
             running = state.actionRunning,
             message = state.actionMessage,
             onDismiss = { vm.closeDetails() },
+            onMap = { vm.closeDetails(); onMap(load) },
             onOffer = { vm.submitOffer(it) },
             onAccept = { vm.acceptLoad() }
         )
@@ -169,10 +175,11 @@ private fun LoadDetailsDialog(
     running: Boolean,
     message: String?,
     onDismiss: () -> Unit,
+    onMap: () -> Unit,
     onOffer: (Double) -> Unit,
     onAccept: () -> Unit
 ) {
-    var amount by remember(load.id) { mutableStateOf("%.2f".format(load.priceEur)) }
+    var amount by remember(load.id) { mutableStateOf("%.2f".format(java.util.Locale.US, load.priceEur)) }
     var confirmOffer by remember(load.id) { mutableStateOf(false) }
     var confirmAccept by remember(load.id) { mutableStateOf(false) }
 
@@ -188,6 +195,7 @@ private fun LoadDetailsDialog(
                 Text("Empty: ${"%.0f".format(load.emptyDistanceKm)} km")
                 Text("Weight: ${load.weightKg} kg • Vehicle: ${load.vehicleType}")
                 Text("Match Score: ${load.matchScore}%")
+                TextButton(onClick = onMap) { Text("Показати на карті") }
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it },
@@ -224,7 +232,7 @@ private fun LoadDetailsDialog(
             confirmButton = {
                 TextButton(onClick = {
                     confirmOffer = false
-                    amount.toDoubleOrNull()?.takeIf { it > 0 }?.let(onOffer)
+                    amount.replace(',', '.').toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 }?.let(onOffer)
                 }) { Text("Confirm offer") }
             },
             dismissButton = { TextButton(onClick = { confirmOffer = false }) { Text("Cancel") } }

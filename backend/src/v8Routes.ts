@@ -1,37 +1,16 @@
-import { NextLoadController } from "./nextLoadController";
-import { TransEuWebhookStore } from "./transEuWebhookStore";
+import {NextLoadController} from './nextLoadController';
+import {authenticate} from './v13';
+import type {FastifyInstance} from 'fastify';
+import {z} from 'zod';
 
-export function registerV8Routes(app: any) {
-  const nextLoad = new NextLoadController();
-  const events = new TransEuWebhookStore();
-
-  app.post("/v1/vehicle/position", async (req: any) => {
-    const body = req.body;
-    if (!body?.driverId || !Number.isFinite(body.lat) || !Number.isFinite(body.lon)) {
-      return { error: "invalid_position" };
-    }
-    return nextLoad.updatePosition({
-      driverId: String(body.driverId),
-      lat: Number(body.lat),
-      lon: Number(body.lon),
-      accuracyM: body.accuracyM,
-      speedKmh: body.speedKmh,
-      headingDeg: body.headingDeg,
-      recordedAt: body.recordedAt ?? new Date().toISOString()
-    });
+export function registerV8Routes(app:FastifyInstance){
+  const nextLoad=new NextLoadController();
+  app.post('/v1/vehicle/position',async(req,reply)=>{
+    const user=await authenticate(req);
+    const parsed=z.object({driverId:z.string().optional(),lat:z.number().min(-90).max(90),lon:z.number().min(-180).max(180),accuracyM:z.number().nonnegative().optional(),speedKmh:z.number().nonnegative().optional(),headingDeg:z.number().min(0).max(360).optional()}).safeParse(req.body);
+    if(!parsed.success)return reply.code(400).send({error:'invalid_position'});
+    if(parsed.data.driverId && parsed.data.driverId!==user.driverId)return reply.code(403).send({error:'forbidden'});
+    return nextLoad.updatePosition({...parsed.data,driverId:user.driverId,recordedAt:new Date().toISOString()});
   });
-
-  app.post("/v1/webhooks/trans-eu/v8", async (req: any) => {
-    const body = req.body ?? {};
-    const event = {
-      provider: "trans.eu" as const,
-      id: String(body.id ?? `${body.event_name}:${body.occurred_at}`),
-      eventName: String(body.event_name ?? "unknown"),
-      occurredAt: String(body.occurred_at ?? new Date().toISOString()),
-      data: body.data
-    };
-    return { received: true, duplicate: !events.add(event) };
-  });
-
-  app.get("/v1/webhooks/trans-eu/events", async () => events.all());
+  app.post('/v1/webhooks/trans-eu/v8',async(_req,reply)=>reply.code(503).send({error:'webhooks_not_configured'}));
 }

@@ -41,7 +41,8 @@ class BackendExchangeAdapter @Inject constructor(
             maxEmptyKm = settings.maxEmptyKm,
             minMatchScore = settings.minMatchScore,
             vehicleType = settings.vehicleType,
-            page = page, pageSize = pageSize
+            page = page, pageSize = pageSize,
+            minPriceEur = settings.minPriceEur, destination = settings.destination
         )
         return ExchangePage(
             items = response.items.map(::mapLoad),

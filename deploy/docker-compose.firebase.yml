@@ -1,0 +1,11 @@
+# Add with: -f deploy/docker-compose.prod.yml -f deploy/docker-compose.firebase.yml
+services:
+  worker:
+    environment:
+      PUSH_PROVIDER: firebase
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/firebase_admin
+    secrets:
+      - firebase_admin
+secrets:
+  firebase_admin:
+    file: ${FIREBASE_ADMIN_FILE:?Set the absolute path to the Firebase Admin credential file}

@@ -7,6 +7,10 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+if (file("google-services.json").exists()) apply(plugin = "com.google.gms.google-services")
+fun configString(name: String, fallback: String = "") =
+    "\"" + (project.findProperty(name)?.toString() ?: fallback).replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+
 android {
     buildFeatures { buildConfig = true }
     namespace = "com.loadfinder.app"
@@ -23,17 +27,57 @@ android {
 
     defaultConfig {
         manifestPlaceholders["MAPS_API_KEY"] = project.findProperty("MAPS_API_KEY") ?: ""
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.loadfinder.app"
+        buildConfigField("String", "OIDC_ISSUER", configString("OIDC_ISSUER"))
+        buildConfigField("String", "OIDC_CLIENT_ID", configString("OIDC_CLIENT_ID"))
+        buildConfigField("String", "OIDC_SCOPES", configString("OIDC_SCOPES", "openid profile offline_access"))
+        buildConfigField("boolean", "MAPS_CONFIGURED", "${!project.findProperty("MAPS_API_KEY")?.toString().isNullOrBlank()}")
+        buildConfigField("boolean", "FIREBASE_CONFIGURED", "${file("google-services.json").exists()}")
         buildConfigField("String", "LOADFINDER_BASE_URL", "\"${project.findProperty("LOADFINDER_BASE_URL") ?: ""}\"")
         buildConfigField("boolean", "LOADFINDER_USE_MOCK", "${project.findProperty("LOADFINDER_USE_MOCK") ?: "false"}")
         applicationId = "com.loadfinder.app"
         minSdk = 29
         targetSdk = 35
-        versionCode = 20
-        versionName = "0.20.0"
+        versionCode = 21
+        versionName = "0.21.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("production") {
+            System.getenv("LOADFINDER_KEYSTORE")?.let { storeFile = file(it) }
+            storePassword = System.getenv("LOADFINDER_STORE_PASSWORD")
+            keyAlias = System.getenv("LOADFINDER_KEY_ALIAS")
+            keyPassword = System.getenv("LOADFINDER_KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        getByName("release") { signingConfig = signingConfigs.getByName("production") }
+    }
+}
+
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    doFirst {
+        val apiUrl = project.findProperty("LOADFINDER_BASE_URL")?.toString().orEmpty()
+        val issuer = project.findProperty("OIDC_ISSUER")?.toString().orEmpty()
+        require(apiUrl.startsWith("https://") && issuer.startsWith("https://")) { "Release requires HTTPS API and OIDC issuer URLs" }
+        require(!project.findProperty("OIDC_CLIENT_ID")?.toString().isNullOrBlank()) { "OIDC_CLIENT_ID is required" }
+        require(project.findProperty("LOADFINDER_USE_MOCK")?.toString() != "true") { "Mock data is forbidden in release builds" }
+        require(!project.findProperty("MAPS_API_KEY")?.toString().isNullOrBlank()) { "MAPS_API_KEY is required for release" }
+        require(file("google-services.json").exists()) { "Firebase Android configuration is required for release" }
+        listOf("LOADFINDER_KEYSTORE", "LOADFINDER_STORE_PASSWORD", "LOADFINDER_KEY_ALIAS", "LOADFINDER_KEY_PASSWORD").forEach {
+            require(!System.getenv(it).isNullOrBlank()) { "$it is required to sign the release" }
+        }
     }
 }
 
 dependencies {
+    implementation("net.openid:appauth:0.11.1")
+    ksp("androidx.hilt:hilt-compiler:1.2.0")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation(platform("androidx.compose:compose-bom:2025.01.01"))
     androidTestImplementation(platform("androidx.compose:compose-bom:2025.01.01"))
     implementation("androidx.paging:paging-runtime:3.5.1")

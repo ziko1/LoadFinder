@@ -16,12 +16,18 @@ import { registerV15Routes } from "./v15/routes";
 import { registerV16Routes } from "./v16/routes";
 import { registerV17Routes } from "./v17/routes";
 import { registerV19 } from "./v19";
+import type { ExchangeSearchProvider } from "./v11/exchangeAggregator";
+import { geoKm } from "./v11/ranking";
 
-const app = Fastify({ logger: true });
+export function buildApp(options: {providers?:ExchangeSearchProvider[]; logger?:boolean} = {}) {
+const app = Fastify({ logger: options.logger ?? true });
 
 const isProduction = String(process.env.NODE_ENV ?? "").toLowerCase() === "production";
 if (isProduction && (!config.databaseUrl || !process.env.TOKEN_ENCRYPTION_KEY)) {
   throw new Error("PRODUCTION_AUTH_STORAGE_REQUIRED");
+}
+if(isProduction && (!config.auth.issuer || !config.auth.audience || !config.auth.jwksUrl || !config.redisUrl)) {
+  throw new Error("PRODUCTION_AUTH_AND_REDIS_REQUIRED");
 }
 
 const tokens = config.databaseUrl && process.env.TOKEN_ENCRYPTION_KEY
@@ -44,24 +50,29 @@ const providers = [
     }
   }] : [])
 ];
-const engine = new UnifiedExchangeSearch(providers);
+const engine = new UnifiedExchangeSearch(options.providers ?? providers);
+app.addHook('onClose', async()=>{ if(tokens instanceof EncryptedTokenStore) await tokens.close(); });
 
-function unifiedToApiLoad(x: any) {
+function unifiedToApiLoad(x: any, origin: {lat:number;lon:number}) {
   const raw = x.raw ?? {};
+  const metadata = raw.loadfinder ?? raw.raw?.loadfinder ?? {};
+  const pickupDistanceKm = geoKm(origin, x.pickup);
   return {
     id: `${x.provider}:${x.externalId}`,
     exchange: String(x.provider).toUpperCase(),
-    pickupCity: String(raw.pickupCity ?? raw.raw?.loadfinder?.pickupCity ?? "Unknown"),
+    pickupCity: String(raw.pickupCity ?? metadata.pickupCity ?? "Unknown"),
     pickup: x.pickup,
-    deliveryCity: String(raw.deliveryCity ?? raw.raw?.loadfinder?.deliveryCity ?? "Unknown"),
+    pickupLat: x.pickup.lat, pickupLon: x.pickup.lon,
+    deliveryCity: String(raw.deliveryCity ?? metadata.deliveryCity ?? "Unknown"),
     delivery: x.delivery,
-    weightKg: Number(raw.weightKg ?? raw.raw?.loadfinder?.weightKg ?? 0),
+    deliveryLat: x.delivery.lat, deliveryLon: x.delivery.lon,
+    weightKg: Number(raw.weightKg ?? metadata.weightKg ?? 0),
     volumeM3: Number(raw.volumeM3 ?? 0),
-    vehicleType: String(raw.vehicleType ?? raw.raw?.loadfinder?.vehicleType ?? "UNKNOWN"),
+    vehicleType: String(raw.vehicleType ?? metadata.vehicleType ?? "UNKNOWN"),
     priceEur: Number(x.priceEur),
     distanceKm: Number(x.distanceKm),
-    pickupDistanceKm: Number(raw.pickupDistanceKm ?? 0),
-    emptyDistanceKm: Number(raw.emptyDistanceKm ?? 0),
+    pickupDistanceKm,
+    emptyDistanceKm: pickupDistanceKm,
     pricePerKm: Number(x.distanceKm) > 0 ? Number(x.priceEur) / Number(x.distanceKm) : 0,
     matchScore: Math.max(0, Math.min(100, Math.round(Number(raw.matchScore ?? raw.score ?? 0)))),
     status: "AVAILABLE"
@@ -104,7 +115,10 @@ async function runLoadsSearch(req: any, reply: any): Promise<{ loads: ReturnType
   const maxEmptyKm = Number(req.query?.maxEmptyKm ?? 1e9);
   const minMatchScore = Number(req.query?.minMatchScore ?? 0);
   const vehicleType = String(req.query?.vehicleType ?? "");
-  if (![lat, lon, radiusKm].every(Number.isFinite) ||
+  const minPriceEur = Number(req.query?.minPriceEur ?? 0);
+  const destination = String(req.query?.destination ?? "").trim().toLocaleLowerCase();
+  if (![lat, lon, radiusKm, minPricePerKm, maxEmptyKm, minMatchScore, minPriceEur].every(Number.isFinite) ||
+      minPricePerKm < 0 || maxEmptyKm < 0 || minPriceEur < 0 || minMatchScore < 0 || minMatchScore > 100 ||
       Math.abs(lat) > 90 || Math.abs(lon) > 180 ||
       radiusKm <= 0 || radiusKm > 250) {
     reply.code(400).send({ error: "invalid_search_params" });
@@ -113,10 +127,13 @@ async function runLoadsSearch(req: any, reply: any): Promise<{ loads: ReturnType
   const user = await authenticate(req);
   const loads = await engine.search({ lat, lon, radiusKm }, user.driverId);
   const filtered = loads
-    .map(unifiedToApiLoad)
+    .map(x=>unifiedToApiLoad(x, {lat,lon}))
     .filter((x: any) => x.pickupDistanceKm <= radiusKm)
     .filter((x: any) => x.pricePerKm >= minPricePerKm)
     .filter((x: any) => x.emptyDistanceKm <= maxEmptyKm)
+    .filter(x=>x.priceEur >= minPriceEur)
+    .filter(x=>!destination || x.deliveryCity.toLocaleLowerCase().includes(destination))
+    .filter(x=>!vehicleType || vehicleType === 'ANY' || x.vehicleType.toUpperCase() === vehicleType.toUpperCase())
     .map((x: any) => ({ ...x, matchScore: calculateApiMatchScore(x, radiusKm, maxEmptyKm, minPricePerKm, vehicleType) }))
     .filter((x: any) => x.matchScore >= minMatchScore)
     .sort((a: any, b: any) => b.matchScore - a.matchScore);
@@ -128,7 +145,7 @@ app.get("/v1/loads", async (req: any, reply) => {
     const result = await runLoadsSearch(req, reply);
     return result?.loads ?? [];
   } catch (e: any) {
-    return reply.code(e?.message === "UNAUTHENTICATED" ? 401 : 400).send({ error: e?.message ?? "load_search_failed" });
+    return reply.code(e.statusCode ?? (e?.message === "UNAUTHENTICATED" ? 401 : 400)).send({ error: e?.message ?? "load_search_failed" });
   }
 });
 
@@ -138,6 +155,7 @@ app.get("/v1/loads/page", async (req: any, reply) => {
     if (!result) return;
     const page = Math.max(1, Math.min(1000, Math.floor(Number(req.query?.page ?? 1))));
     const pageSize = Math.max(1, Math.min(50, Math.floor(Number(req.query?.pageSize ?? 25))));
+    if(!Number.isFinite(page) || !Number.isFinite(pageSize)) return reply.code(400).send({error:'invalid_pagination'});
     const start = (page - 1) * pageSize;
     const items = result.loads.slice(start, start + pageSize);
     return {
@@ -148,7 +166,7 @@ app.get("/v1/loads/page", async (req: any, reply) => {
       hasMore: start + items.length < result.loads.length
     };
   } catch (e: any) {
-    return reply.code(e?.message === "UNAUTHENTICATED" ? 401 : 400).send({ error: e?.message ?? "load_search_page_failed" });
+    return reply.code(e.statusCode ?? (e?.message === "UNAUTHENTICATED" ? 401 : 400)).send({ error: e?.message ?? "load_search_page_failed" });
   }
 });
 
@@ -230,10 +248,19 @@ app.post<{ Params: { loadId: string }; Body: { confirmed?: boolean } }>("/v1/loa
 
 app.get("/health", async () => ({ ok: true, version: process.env.APP_VERSION ?? "0.4.0" }));
 
+app.post('/v1/exchanges/trans-eu/connect-url',async(req,reply)=>{
+  try{const user=await authenticate(req);return {url:await createTransEuAuthorizationUrl(user.driverId)};}
+  catch(e:any){return reply.code(e.statusCode??400).send({error:e.message});}
+});
+app.get('/v1/exchanges/trans-eu/status',async(req)=>{
+  const user=await authenticate(req);
+  return {configured:!!(config.TRANS_EU_CLIENT_ID&&config.TRANS_EU_API_KEY&&config.TRANS_EU_CLIENT_SECRET),connected:!!(await tokens.get(user.driverId)||await tokens.getRefreshToken(user.driverId))};
+});
+
 app.get("/v1/exchanges/trans-eu/connect", async (req, reply) => {
   try {
     const user = await authenticate(req);
-    return reply.redirect(createTransEuAuthorizationUrl(user.driverId));
+    return reply.redirect(await createTransEuAuthorizationUrl(user.driverId));
   } catch {
     return reply.code(401).send({ error: "unauthenticated" });
   }
@@ -284,6 +311,14 @@ app.get("/v1/exchanges/trans-eu/accepted", async req => {
   return transEu.getAccepted(user.driverId);
 });
 
-app.post("/v1/webhooks/trans-eu", async req => { app.log.info({ event: req.body }, "Trans.eu callback received"); return { received: true }; });
+// Ingress stays disabled until the provider's verification contract is configured.
+app.post("/v1/webhooks/trans-eu", async (_req, reply) => reply.code(503).send({error:'webhooks_not_configured'}));
 
-app.listen({ port: config.PORT, host: "0.0.0.0" }).catch((err: unknown) => { app.log.error(err); process.exit(1); });
+return app;
+}
+
+if (require.main === module) {
+  const app = buildApp();
+  app.listen({ port: config.PORT, host: "0.0.0.0" }).catch((err: unknown) => { app.log.error(err); process.exit(1); });
+  for(const signal of ['SIGINT','SIGTERM']) process.once(signal,()=>{void app.close().then(()=>process.exit(0));});
+}

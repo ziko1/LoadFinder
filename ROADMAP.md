@@ -1,5 +1,26 @@
 # LoadFinder — Product Roadmap & Delivery Status
 
+## Current runtime baseline — September 2026
+
+The historical v2–v74 tables below describe source presence, not production acceptance.
+They are retained as development history; use this section and [RUNNING.md](docs/RUNNING.md)
+for current status.
+
+| Area | Current evidence / remaining gate |
+|---|---|
+| Complete source upload | Android, Gradle wrapper, backend, migrations and CI are in GitHub |
+| API runtime | Android response shape, distance/filter calculations, JWT checks and cross-user access covered by request-level tests |
+| Storage | Clean PostGIS schema and repeatable migrations; encrypted OAuth tokens, notification retry/deduplication and Redis round trip tested in CI |
+| Android account | AppAuth browser login with PKCE, encrypted session, refresh and local logout implemented; actual issuer configuration required |
+| Android UI | Search, saved results, persisted settings, account connection, map and notification navigation wired into the main screen |
+| Notifications | Firebase gateway and Android token registration implemented; actual Firebase delivery requires credentials and a device |
+| Android runtime | APK/unit and emulator smoke workflows cover launch, encrypted storage and Hilt WorkManager initialization |
+| Release | Signed APK/AAB workflow and configuration checks implemented; keystore and production service configuration required |
+| Live acceptance | Real account, HTTPS deployment, GPS search, FCM delivery and explicitly approved exchange actions remain to be tested in the owner's environment |
+
+No TIMOCOM/Teleroute/other-exchange integration, Play Store publication, backup restore
+rehearsal, or production deployment is claimed.
+
 Status legend:
 - ✅ DONE — implemented and statically verified in the current artifact
 - 🟡 PARTIAL — skeleton/wiring exists, but production integration is incomplete

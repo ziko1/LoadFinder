@@ -14,10 +14,10 @@ import javax.inject.Singleton
 
 @Singleton
 class ApiAuthInterceptor @Inject constructor(
-    private val authStore: ApiAuthStore
+    private val session: com.loadfinder.app.auth.OidcSession
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = authStore.getToken()
+        val token = kotlinx.coroutines.runBlocking { session.accessToken() }
         val request = chain.request().newBuilder()
             .apply { if (!token.isNullOrBlank()) header("Authorization", "Bearer $token") }
             .build()
@@ -61,8 +61,23 @@ class ApiAuthStore @Inject constructor(
     }
 
     fun clear() {
-        prefs.edit().remove(KEY_TOKEN).remove(KEY_IV).apply()
+        prefs.edit().clear().commit()
     }
+
+    fun setAuthState(value: String) {
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.ENCRYPT_MODE, key())
+        prefs.edit().putString("state", Base64.encodeToString(cipher.doFinal(value.toByteArray(Charsets.UTF_8)), Base64.NO_WRAP))
+            .putString("state_iv", Base64.encodeToString(cipher.iv, Base64.NO_WRAP)).commit()
+    }
+
+    fun getAuthState(): String? = runCatching {
+        val value = prefs.getString("state", null) ?: return null
+        val iv = prefs.getString("state_iv", null) ?: return null
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, Base64.decode(iv, Base64.NO_WRAP)))
+        String(cipher.doFinal(Base64.decode(value, Base64.NO_WRAP)), Charsets.UTF_8)
+    }.getOrNull()
 
     private fun key(): SecretKey {
         val ks = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }

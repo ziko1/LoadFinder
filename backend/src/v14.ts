@@ -16,6 +16,7 @@ export type SecretToken = { accessToken: string; expiresAt?: number };
 export class EncryptedTokenStore {
   private readonly key: Buffer;
   private readonly pool: Pool;
+  async close(){await this.pool.end();}
   constructor(masterKey = process.env.TOKEN_ENCRYPTION_KEY ?? '') {
     if (!masterKey) throw new Error('TOKEN_ENCRYPTION_KEY_REQUIRED');
     this.key = crypto.createHash('sha256').update(masterKey).digest();
@@ -110,6 +111,7 @@ export function createV14Workflow(engine: UnifiedExchangeSearch, submitBid: (dri
   const pool = persistence?.pool;
 
   return {
+    async close(){limiter.close();await pool?.end();},
     async search(req: FastifyRequest) {
       const user = await authenticate(req);
       if (!(await limiter.allow(`search:${user.driverId}`, 30, 60))) throw Object.assign(new Error('RATE_LIMITED'), { statusCode: 429 });
@@ -155,6 +157,9 @@ export function createV14Workflow(engine: UnifiedExchangeSearch, submitBid: (dri
 
 export function registerV14(app: FastifyInstance, engine: UnifiedExchangeSearch, submitBid: (driverId: string, load: UnifiedLoad, amountEur: number) => Promise<unknown>) {
   const wf = createV14Workflow(engine, submitBid);
+  app.addHook('onClose',()=>wf.close());
+  const persistence=config.databaseUrl?new V14Persistence():undefined;
+  app.addHook('onClose',async()=>{await persistence?.pool.end();});
   app.post('/v14/search', async (req, reply) => { try { return await wf.search(req); } catch (e:any) { return reply.code(e.statusCode ?? 400).send({ error: e.message ?? 'search_failed' }); } });
   app.post('/v14/auto-bid/preview', async (req, reply) => { try { return await wf.previewAutoBid(req); } catch (e:any) { return reply.code(e.statusCode ?? 400).send({ error: e.message ?? 'preview_failed' }); } });
   app.post('/v14/auto-bid/execute', async (req, reply) => { try { return await wf.executeAutoBid(req); } catch (e:any) { return reply.code(e.statusCode ?? 400).send({ error: e.message ?? 'bid_failed' }); } });
@@ -164,11 +169,18 @@ export function registerV14(app: FastifyInstance, engine: UnifiedExchangeSearch,
       const user = await authenticate(req);
       const b = z.object({ token: z.string().min(10).max(4096), platform: z.string().min(2).max(32).default('android') }).parse(req.body ?? {});
       if (!config.databaseUrl) return reply.code(503).send({ error: 'database_required' });
-      const persistence = new V14Persistence();
-      await persistence.savePushToken(user.driverId, b.token, b.platform);
+      await persistence!.savePushToken(user.driverId, b.token, b.platform);
       return { ok: true, driverId: user.driverId, platform: b.platform };
     } catch (e:any) {
       return reply.code(e.statusCode ?? 400).send({ error: e.message ?? 'push_token_failed' });
     }
+  });
+  app.post('/v14/push-token/remove',async(req,reply)=>{
+    const user=await authenticate(req);
+    const parsed=z.object({token:z.string().min(10).max(4096)}).safeParse(req.body);
+    if(!parsed.success)return reply.code(400).send({error:'invalid_token'});
+    if(!persistence)return reply.code(503).send({error:'database_required'});
+    await persistence.pool.query('delete from push_tokens where token=$1 and driver_id=(select id from drivers where external_subject=$2)',[parsed.data.token,user.driverId]);
+    return {ok:true};
   });
 }
