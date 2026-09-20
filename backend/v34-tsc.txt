@@ -1,0 +1,100 @@
+src/config.ts(2,16): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(3,16): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(4,16): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(5,13): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(7,14): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(8,13): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(9,15): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(11,23): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(12,27): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(13,21): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(14,26): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(16,15): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(17,19): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(18,13): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/config.ts(19,18): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/db.ts(1,16): error TS2307: Cannot find module 'pg' or its corresponding type declarations.
+src/integrations/transEu/oauth.ts(1,20): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+src/server.ts(1,21): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/server.ts(20,38): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/server.ts(49,54): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/server.ts(51,50): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(51,55): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/server.ts(60,103): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(60,108): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/server.ts(70,97): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(75,159): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(75,164): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/server.ts(82,137): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(82,142): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/server.ts(88,50): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(93,41): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/server.ts(95,98): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v13.ts(1,20): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+src/v13.ts(2,52): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/v13.ts(3,20): error TS2307: Cannot find module 'pg' or its corresponding type declarations.
+src/v13.ts(4,19): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/v13.ts(19,34): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v13.ts(30,39): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v13.ts(82,33): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v13.ts(82,37): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v13.ts(86,34): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v13.ts(86,38): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v13.ts(96,91): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v13.ts(96,95): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v13.ts(102,77): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v13.ts(102,81): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v13.ts(107,113): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v13.ts(107,117): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v14.ts(1,20): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+src/v14.ts(2,54): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/v14.ts(3,22): error TS2307: Cannot find module 'pg' or its corresponding type declarations.
+src/v14.ts(4,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/v14.ts(17,25): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(19,27): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(27,24): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(31,71): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(32,25): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(33,12): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(33,43): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(93,129): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(93,189): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(103,11): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v14.ts(124,34): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v14.ts(124,39): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v14.ts(125,44): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v14.ts(125,49): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v14.ts(126,44): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v14.ts(126,49): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v14.ts(127,34): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v14.ts(127,39): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v14.ts(128,38): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v14.ts(128,43): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v14Persistence.ts(1,22): error TS2307: Cannot find module 'pg' or its corresponding type declarations.
+src/v15/redisQueue.ts(1,19): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/v15/redisQueue.ts(7,21): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/v15/routes.ts(1,38): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/v15/routes.ts(2,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/v15/routes.ts(10,47): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v15/routes.ts(10,52): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v16/routes.ts(1,38): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/v16/routes.ts(2,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/v16/routes.ts(12,43): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v16/routes.ts(12,48): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v16/routes.ts(21,44): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v16/routes.ts(21,49): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v16/routes.ts(31,44): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v16/routes.ts(31,49): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v17/routes.ts(1,38): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/v17/routes.ts(2,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/v17/routes.ts(15,44): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v17/routes.ts(15,49): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v17/routes.ts(31,43): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v17/routes.ts(31,48): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v17/routes.ts(45,45): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v17/routes.ts(45,50): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v19.ts(1,38): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+src/v19.ts(2,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/v19.ts(14,43): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/v19.ts(14,48): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/v19.ts(18,12): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

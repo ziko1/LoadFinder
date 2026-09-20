@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = new URL('.', import.meta.url).pathname;
+const read = p => fs.readFileSync(path.join(root,p),'utf8');
+const server = read('backend/src/server.ts');
+const v19 = read('backend/src/v19.ts');
+const compose = read('docker-compose.yml');
+const gradle = read('android/app/build.gradle.kts');
+const manifest = read('android/app/src/main/AndroidManifest.xml');
+if (!server.includes('registerV19(app)')) throw new Error('V19 route not registered');
+if (!server.includes('version: "v19"')) throw new Error('health version stale');
+if (!v19.includes('capturedAt') || !v19.includes('future_timestamp_not_allowed')) throw new Error('timestamp guard missing');
+if (!v19.includes('where driver_search_positions.captured_at <= excluded.captured_at')) throw new Error('stale GPS overwrite guard missing');
+if (!compose.includes('AUTH_JWKS_URL: ${AUTH_JWKS_URL:?AUTH_JWKS_URL is required}')) throw new Error('compose auth secret guard missing');
+if (!compose.includes('TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?TOKEN_ENCRYPTION_KEY is required}')) throw new Error('token secret guard missing');
+for (const x of ['com.android.application','org.jetbrains.kotlin.android','androidx.compose.material3:material3','retrofit:2.11.0']) if (!gradle.includes(x)) throw new Error(`Android dependency/plugin missing: ${x}`);
+for (const x of ['android.permission.INTERNET','android.permission.ACCESS_FINE_LOCATION','android:name=".MainActivity"']) if (!manifest.includes(x)) throw new Error(`Manifest item missing: ${x}`);
+console.log('V19 structural/integration audit: PASS');

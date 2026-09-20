@@ -1,0 +1,33 @@
+name: LoadFinder Source Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "android/**"
+      - "backend/**"
+      - "ci/**"
+      - ".github/workflows/source-preflight.yml"
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run repository preflight
+        run: |
+          if [ -f ci/verify_project.py ]; then
+            python ci/verify_project.py
+          elif [ -f ci/verify.sh ]; then
+            bash ci/verify.sh
+          else
+            echo "::error::No repository preflight script found."
+            exit 1
+          fi
