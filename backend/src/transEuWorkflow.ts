@@ -25,6 +25,7 @@ export class TransEuWorkflow {
 
   async accept(driverId: string, freightId: string) {
     const proposal = await this.client.getProposalDetails(driverId, freightId);
+    if(proposal.decision_date && Date.parse(proposal.decision_date)<Date.now()) throw new Error('PROPOSAL_EXPIRED');
 
     if (proposal.status && proposal.status !== "active") {
       throw new Error("PROPOSAL_NOT_ACTIVE");

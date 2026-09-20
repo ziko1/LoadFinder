@@ -8,12 +8,13 @@ import { EncryptedTokenStore } from '../v14';
 import { rank } from '../v11/ranking';
 import { LoadRepository } from '../v15/loadRepository';
 import { SearchQueue, type SearchJob } from '../v15/redisQueue';
-import { LogPushGateway } from '../push';
+import { FirebasePushGateway } from '../firebasePush';
 import { ReliableLoadNotificationService } from './notificationService';
 import { v17Config } from './config';
 import { loadRankingConfig } from '../v16/searchConfig';
 
 const mock = new MockAdapter();
+if(!config.databaseUrl||!config.redisUrl||!process.env.TOKEN_ENCRYPTION_KEY) throw new Error('WORKER_STORAGE_REQUIRED');
 const tokens = config.databaseUrl && process.env.TOKEN_ENCRYPTION_KEY
   ? new EncryptedTokenStore()
   : new MemoryAccessTokenStore();
@@ -37,7 +38,7 @@ const engine = new UnifiedExchangeSearch(providers);
 
 const queue = new SearchQueue(config.redisUrl || undefined);
 const repo = new LoadRepository(pool);
-const notifications = new ReliableLoadNotificationService(pool, new LogPushGateway());
+const notifications = new ReliableLoadNotificationService(pool, new FirebasePushGateway(pool));
 const rankingConfig = loadRankingConfig();
 
 async function runJob(job: SearchJob) {
@@ -83,7 +84,9 @@ async function scheduleDue() {
       limit $2`, [v17Config.AUTO_SEARCH_STALE_POSITION_MINUTES, v17Config.AUTO_SEARCH_BATCH]);
 
     for (const r of rows) {
-      jobs.push({ driverExternalSubject: String(r.external_subject), lat: Number(r.lat), lon: Number(r.lon), radiusKm: Number(r.radius_km) });
+      const job={ driverExternalSubject: String(r.external_subject), lat: Number(r.lat), lon: Number(r.lon), radiusKm: Number(r.radius_km) };
+      await queue.enqueue(job);
+      jobs.push(job);
       await client.query(`update auto_search_state set last_run_at=now(),next_run_at=now()+make_interval(secs => $2),updated_at=now() where driver_id=$1`, [r.id, Number(r.interval_seconds)]);
     }
     await client.query('commit');
@@ -91,7 +94,6 @@ async function scheduleDue() {
     await client.query('rollback');
     throw e;
   } finally { client.release(); }
-  for (const job of jobs) await queue.enqueue(job);
   return jobs.length;
 }
 
@@ -112,7 +114,7 @@ async function main() {
   };
 
   try { await loop(); }
-  finally { await queue.close(); await pool.end(); }
+  finally { await queue.close(); if(tokens instanceof EncryptedTokenStore)await tokens.close(); await pool.end(); }
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
