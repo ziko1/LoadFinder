@@ -175,4 +175,12 @@ export function registerV14(app: FastifyInstance, engine: UnifiedExchangeSearch,
       return reply.code(e.statusCode ?? 400).send({ error: e.message ?? 'push_token_failed' });
     }
   });
+  app.post('/v14/push-token/remove',async(req,reply)=>{
+    const user=await authenticate(req);
+    const parsed=z.object({token:z.string().min(10).max(4096)}).safeParse(req.body);
+    if(!parsed.success)return reply.code(400).send({error:'invalid_token'});
+    if(!persistence)return reply.code(503).send({error:'database_required'});
+    await persistence.pool.query('delete from push_tokens where token=$1 and driver_id=(select id from drivers where external_subject=$2)',[parsed.data.token,user.driverId]);
+    return {ok:true};
+  });
 }

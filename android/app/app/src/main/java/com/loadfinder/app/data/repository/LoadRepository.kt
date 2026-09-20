@@ -12,8 +12,11 @@ class LoadRepository @Inject constructor(
     private val exchanges: Set<@JvmSuppressWildcards ExchangeAdapter>,
     private val score: MatchScoreCalculator
 ) {
+    suspend fun getDetailsById(id: String): Load? =
+        exchanges.firstOrNull { it.name.equals("BACKEND", ignoreCase = true) }?.getLoadDetails(id)
     suspend fun getDetails(load: Load): Load? {
-        val exchange = exchanges.firstOrNull { it.name.equals(load.exchange, ignoreCase = true) } ?: return load
+        val exchange = exchanges.firstOrNull { it.name.equals("BACKEND", ignoreCase = true) }
+            ?: exchanges.firstOrNull { it.name.equals(load.exchange, ignoreCase = true) } ?: return load
         return try {
             exchange.getLoadDetails(load.id) ?: load
         } catch (e: CancellationException) {
@@ -67,13 +70,23 @@ class LoadRepository @Inject constructor(
     }
 
     suspend fun search(lat: Double, lon: Double, settings: SearchSettings): List<Load> {
+        val backend = exchanges.firstOrNull { it.name.equals("BACKEND", ignoreCase = true) }
+        if (backend != null) {
+            val results = mutableListOf<Load>()
+            for (page in 1..20) {
+                val response = backend.searchLoadsPage(lat, lon, settings, page, 50) ?: break
+                results.addAll(response.items)
+                if (!response.hasMore) break
+            }
+            return results.distinctBy { it.id }
+        }
         val results = exchanges.flatMap { exchange ->
             try {
                 exchange.searchLoads(lat, lon)
             } catch (e: CancellationException) {
                 throw e
-            } catch (_: Exception) {
-                emptyList()
+            } catch (e: Exception) {
+                throw e
             }
         }
         return results

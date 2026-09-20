@@ -12,6 +12,23 @@ object LoadNotificationHelper {
     private const val CHANNEL_NAME = "Load matches"
     private const val SUMMARY_ID = 7000
 
+    private fun openLoad(context: Context, id: String): android.app.PendingIntent {
+        val intent = android.content.Intent(context, com.loadfinder.app.MainActivity::class.java)
+            .putExtra("loadId", id).addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        return android.app.PendingIntent.getActivity(context, id.hashCode(), intent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    fun notifyLoad(context: Context, id: String, title: String, body: String) {
+        ensureChannel(context)
+        val manager = NotificationManagerCompat.from(context)
+        if(!manager.areNotificationsEnabled()) return
+        manager.notify(id.hashCode(), NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_map).setContentTitle(title).setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body)).setContentIntent(openLoad(context,id))
+            .setAutoCancel(true).build())
+    }
+
     fun ensureChannel(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(
@@ -43,6 +60,7 @@ object LoadNotificationHelper {
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
+            .setContentIntent(openLoad(context, loads.first().id))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 

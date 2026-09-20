@@ -251,6 +251,22 @@ class HomeViewModel @Inject constructor(
         _state.value = _state.value.copy(selectedLoad = null, actionMessage = null, actionRunning = false)
     }
 
+    fun openDetailsById(id: String) {
+        viewModelScope.launch {
+            val load = repository.getDetailsById(id)
+            _state.value = _state.value.copy(selectedLoad = load, actionMessage = if(load == null) "Вантаж недоступний. Оновіть пошук." else null)
+        }
+    }
+
+    fun clearSession() {
+        stopLocationTracking()
+        pagingStarted = false
+        _searchContext.value = null
+        _pagedFlow.value = emptyFlow()
+        resultStore.save(emptyList())
+        _state.value = HomeState(settings = settingsStore.get())
+    }
+
     fun submitOffer(amountEur: Double) {
         val load = _state.value.selectedLoad ?: return
         viewModelScope.launch {
