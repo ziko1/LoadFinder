@@ -39,5 +39,31 @@
     "signed_android_release",
     "device_runtime_test"
   ],
-  "next": "oidc_login_refresh_and_first_live_exchange"
+  "next": "configure_owner_approved_https_oidc_exchange_and_device_acceptance",
+  "status_notice": "Legacy v43 lists below are source history, not current production acceptance. Use current_acceptance and ROADMAP.md current section.",
+  "current_acceptance": {
+    "checked_at": "2026-10-08",
+    "tested_sha": "2e4ba5928caa80cdc0d6a024dd5f7aebd20ee16f",
+    "environment": "Linux Node 24.19.0; no integration PostgreSQL/Redis or device",
+    "status": "NOT_READY_FOR_PRODUCTION",
+    "build": "PASS",
+    "tests": {
+      "passed": 56,
+      "skipped": 3,
+      "failed": 0
+    },
+    "implementation_confirmed": [
+      "oidc_pkce_login_refresh_logout",
+      "versioned_repeatable_migrations"
+    ],
+    "not_run": [
+      "live_oidc",
+      "real_exchange",
+      "postgres_redis_integration_this_run",
+      "device_gps_push",
+      "signed_release",
+      "backup_restore",
+      "production_deploy"
+    ]
+  }
 }

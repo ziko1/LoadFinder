@@ -1,5 +1,13 @@
 # LoadFinder — Product Roadmap & Delivery Status
 
+## 2026-10-08 — перевірка й порядок завершення
+
+Перевірений source SHA `2e4ba5928caa80cdc0d6a024dd5f7aebd20ee16f`. `npm ci`, `npm test`, `npm run build`: PASS; 56 тестів PASS, 3 integration cases SKIPPED через неналаштовані PostgreSQL/Redis. Пропуски не є успіхом. Свіжої Android/device/live перевірки не виконано.
+
+OIDC login/refresh/logout (`android/.../auth/OidcSession.kt`) і versioned migrations реалізовані; старі TODO нижче є історією, а не актуальним твердженням про відсутність коду. Реальний вхід і повторна міграція в цій сесії NOT RUN.
+
+План: (1) налаштувати ізольовані PostgreSQL/Redis й виконати 3 integration cases; (2) погоджені HTTPS/OIDC/Trans.eu/Maps/FCM inputs; (3) Android install/upgrade/GPS/100км/offline/FCM/logout; (4) backup/restore; (5) повний сценарій користувача й передавання підписаного артефакту. Реальні ставки/прийняття вантажу тільки за окремим дозволом. Evidence: `evidence/readiness-20261008.json`. Product NOT READY; доступні local source checks PASS.
+
 ## Current runtime baseline — September 2026
 
 The historical v2–v74 tables below describe source presence, not production acceptance.
