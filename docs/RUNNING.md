@@ -66,7 +66,9 @@ cd android
 ```
 
 APK: `android/app/app/build/outputs/apk/debug/app-debug.apk`.
-CI також публікує `loadfinder-debug-apk` у **LoadFinder Android Build**.
+Ручний workflow **LoadFinder Android Build** публікує `loadfinder-debug-apk`.
+Автоматичні build/unit перевірки залишаються в **LoadFinder CI**; політика запусків
+і поточний execution status описані в [CI_BUDGET_UK.md](CI_BUDGET_UK.md).
 Це debug APK; він не містить чужих production credentials.
 
 Для release задайте `LOADFINDER_KEYSTORE`, `LOADFINDER_STORE_PASSWORD`,

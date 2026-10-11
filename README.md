@@ -42,6 +42,8 @@ properties. Never commit real keys, tokens, `.env` files, keystores, or
 
 GitHub Actions runs the backend tests/build and the Android debug build on
 every pull request before changes are merged into `main`.
+See [CI allocation and execution status](docs/CI_BUDGET_UK.md) for the current
+workflow policy, manual APK downloads and provider execution gates.
 
 
 ## v3

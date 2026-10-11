@@ -1,0 +1,297 @@
+{
+  "checked_at_utc": "2026-10-11T17:47:56Z",
+  "repository": "ziko1/LoadFinder",
+  "scope": "CI allocation and elimination of duplicate automatic build triggers",
+  "status": "BLOCKED_FOR_RUNTIME_VERIFICATION",
+  "base_branch": "docs/current-readiness-20261008",
+  "base_sha": "3d079c316336cc7b5153007e227e58e73fe4297e",
+  "candidate_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+  "branch": "ci/balance-github-codemagic-20261011",
+  "pull_request": "https://github.com/ziko1/LoadFinder/pull/4",
+  "depends_on_pull_request": "https://github.com/ziko1/LoadFinder/pull/3",
+  "instructions_inventory": {
+    "agents_md": "ABSENT in full recursive tree",
+    "canonical_roadmap": "ROADMAP.md",
+    "legacy_roadmap": "docs/ROADMAP-v3.md retained as history",
+    "project_memory": "PROJECT_MEMORY.md created"
+  },
+  "configuration_validation": {
+    "base_sha": "3d079c316336cc7b5153007e227e58e73fe4297e",
+    "workflow_files": {
+      ".github/workflows/android-build.yml": {
+        "sha256": "e2f3060bb9beb7b7ea865fbf8bcb33deffcbbb21f88bcbba5628fd7228a82250",
+        "changed": true
+      },
+      ".github/workflows/android-release.yml": {
+        "sha256": "ffd4139f317bc580de0cb84a6ee3549490c44911d8ad7bbce3962cde68305515",
+        "changed": false
+      },
+      ".github/workflows/android-runtime.yml": {
+        "sha256": "3759bf042eb67a7dd5fad7eb30b588bdbcdb6d70da6d67ea44d10cc2d4c7c39d",
+        "changed": true
+      },
+      ".github/workflows/backend-ci.yml": {
+        "sha256": "18802e046d4fbc40c89f81f4e06612be0efa70811118b3b511f5dabd330a547f",
+        "changed": true
+      },
+      ".github/workflows/ci.yml": {
+        "sha256": "1f33cf9df34339bc5ce1594f5224a18e6a5c025fc3d0e573497845b3a961d8a7",
+        "changed": true
+      },
+      ".github/workflows/runtime-integration.yml": {
+        "sha256": "ba24fc44da189f5f35d9e8eb18609e7618992aa92f48c7690783fcaa984d1516",
+        "changed": true
+      },
+      ".github/workflows/source-preflight.yml": {
+        "sha256": "b93bb8a77d3621e62593aa4a12633c7bcb1be396aa3159a73ac85da423ebe447",
+        "changed": true
+      }
+    },
+    "checks": [
+      "YAML parse with duplicate-key rejection: PASS",
+      "Existing job names, test/build commands, services, environment and release workflow preserved: PASS",
+      "Automatic push limited to main; pull request checks retain no branch/path exclusions: PASS",
+      "Manual debug/backend lanes have no automatic triggers: PASS"
+    ],
+    "status": "PASS",
+    "command": "python3 /workspace/scratch/2d9ac8cc9ae9/balance-ci-flux-loadfinder/validate-ci.py",
+    "exit_code": 0,
+    "environment": "Python 3.12.14; PyYAML 6.0.3",
+    "note": "One-off structural comparison against fetched exact base workflows; hashes and preserved behavior listed above."
+  },
+  "runtime_verification": {
+    "status": "BLOCKED",
+    "source_failure": false,
+    "checks_executed": 0,
+    "provider_gate": "GitHub account execution gate; job annotation inspected in the authenticated UI. No runner was assigned and no step executed.",
+    "evidence_job_url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764878/job/114533001971",
+    "runs": [
+      {
+        "run_id": 38160764878,
+        "url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764878",
+        "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+        "event": "pull_request",
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 114533001971,
+            "run_id": 38160764878,
+            "workflow_name": "LoadFinder CI",
+            "head_branch": "ci/balance-github-codemagic-20261011",
+            "run_url": "https://api.github.com/repos/ziko1/LoadFinder/actions/runs/38160764878",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOUeI5X88AAAAaqrLq8w",
+            "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+            "url": "https://api.github.com/repos/ziko1/LoadFinder/actions/jobs/114533001971",
+            "html_url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764878/job/114533001971",
+            "status": "completed",
+            "conclusion": "failure",
+            "created_at": "2026-10-11T17:42:26Z",
+            "started_at": "2026-10-11T17:42:26Z",
+            "completed_at": "2026-10-11T17:42:29Z",
+            "name": "android",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/ziko1/LoadFinder/check-runs/114533001971",
+            "labels": [
+              "ubuntu-latest"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 114533002079,
+            "run_id": 38160764878,
+            "workflow_name": "LoadFinder CI",
+            "head_branch": "ci/balance-github-codemagic-20261011",
+            "run_url": "https://api.github.com/repos/ziko1/LoadFinder/actions/runs/38160764878",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOUeI5X88AAAAaqrLrXw",
+            "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+            "url": "https://api.github.com/repos/ziko1/LoadFinder/actions/jobs/114533002079",
+            "html_url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764878/job/114533002079",
+            "status": "completed",
+            "conclusion": "failure",
+            "created_at": "2026-10-11T17:42:26Z",
+            "started_at": "2026-10-11T17:42:26Z",
+            "completed_at": "2026-10-11T17:42:29Z",
+            "name": "backend",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/ziko1/LoadFinder/check-runs/114533002079",
+            "labels": [
+              "ubuntu-latest"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          }
+        ]
+      },
+      {
+        "run_id": 38160764962,
+        "url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764962",
+        "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+        "event": "pull_request",
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 114533002109,
+            "run_id": 38160764962,
+            "workflow_name": "Android runtime smoke",
+            "head_branch": "ci/balance-github-codemagic-20261011",
+            "run_url": "https://api.github.com/repos/ziko1/LoadFinder/actions/runs/38160764962",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOUeI5X88AAAAaqrLrfQ",
+            "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+            "url": "https://api.github.com/repos/ziko1/LoadFinder/actions/jobs/114533002109",
+            "html_url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764962/job/114533002109",
+            "status": "completed",
+            "conclusion": "failure",
+            "created_at": "2026-10-11T17:42:26Z",
+            "started_at": "2026-10-11T17:42:26Z",
+            "completed_at": "2026-10-11T17:42:29Z",
+            "name": "emulator",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/ziko1/LoadFinder/check-runs/114533002109",
+            "labels": [
+              "ubuntu-latest"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          }
+        ]
+      },
+      {
+        "run_id": 38160764870,
+        "url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764870",
+        "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+        "event": "pull_request",
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 114533001726,
+            "run_id": 38160764870,
+            "workflow_name": "Runtime integration",
+            "head_branch": "ci/balance-github-codemagic-20261011",
+            "run_url": "https://api.github.com/repos/ziko1/LoadFinder/actions/runs/38160764870",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOUeI5X88AAAAaqrLp_g",
+            "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+            "url": "https://api.github.com/repos/ziko1/LoadFinder/actions/jobs/114533001726",
+            "html_url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764870/job/114533001726",
+            "status": "completed",
+            "conclusion": "failure",
+            "created_at": "2026-10-11T17:42:26Z",
+            "started_at": "2026-10-11T17:42:26Z",
+            "completed_at": "2026-10-11T17:42:29Z",
+            "name": "database-api",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/ziko1/LoadFinder/check-runs/114533001726",
+            "labels": [
+              "ubuntu-latest"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          }
+        ]
+      },
+      {
+        "run_id": 38160764983,
+        "url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764983",
+        "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+        "event": "pull_request",
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 114533002225,
+            "run_id": 38160764983,
+            "workflow_name": "LoadFinder Source Preflight",
+            "head_branch": "ci/balance-github-codemagic-20261011",
+            "run_url": "https://api.github.com/repos/ziko1/LoadFinder/actions/runs/38160764983",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOUeI5X88AAAAaqrLr8Q",
+            "head_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+            "url": "https://api.github.com/repos/ziko1/LoadFinder/actions/jobs/114533002225",
+            "html_url": "https://github.com/ziko1/LoadFinder/actions/runs/38160764983/job/114533002225",
+            "status": "completed",
+            "conclusion": "failure",
+            "created_at": "2026-10-11T17:42:26Z",
+            "started_at": "2026-10-11T17:42:26Z",
+            "completed_at": "2026-10-11T17:42:29Z",
+            "name": "preflight",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/ziko1/LoadFinder/check-runs/114533002225",
+            "labels": [
+              "ubuntu-latest"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          }
+        ]
+      }
+    ]
+  },
+  "before_duplicate_runs": [
+    {
+      "run_id": 37840522772,
+      "workflow": "LoadFinder CI",
+      "event": "push",
+      "head_sha": "3d079c316336cc7b5153007e227e58e73fe4297e"
+    },
+    {
+      "run_id": 37840585032,
+      "workflow": "LoadFinder CI",
+      "event": "pull_request",
+      "head_sha": "3d079c316336cc7b5153007e227e58e73fe4297e"
+    },
+    {
+      "run_id": 37840522880,
+      "workflow": "Runtime integration",
+      "event": "push",
+      "head_sha": "3d079c316336cc7b5153007e227e58e73fe4297e"
+    },
+    {
+      "run_id": 37840585010,
+      "workflow": "Runtime integration",
+      "event": "pull_request",
+      "head_sha": "3d079c316336cc7b5153007e227e58e73fe4297e"
+    }
+  ],
+  "allocation": {
+    "primary": "GitHub Actions standard Ubuntu",
+    "codemagic": "Not configured; no native iOS source, Android emulator and container integration stay in Linux workflows."
+  },
+  "acceptance": [
+    {
+      "criterion": "No duplicate feature-branch push and pull_request automatic runs",
+      "result": "PASS for configuration and received events; four PR workflows received, no push build for candidate."
+    },
+    {
+      "criterion": "Existing canonical job names, test/build commands, database services and signed release retained",
+      "result": "PASS for structural comparison; signed release byte-identical."
+    },
+    {
+      "criterion": "Superseded PR cancellation, bounded jobs and debug/runtime retention",
+      "result": "PASS for configuration"
+    },
+    {
+      "criterion": "Actual GitHub runtime verification of candidate",
+      "result": "BLOCKED before execution"
+    }
+  ],
+  "limitations": [
+    "GitHub branch-protection endpoint is inaccessible to the integration; existing PR job names and unfiltered PR gates were preserved.",
+    "Current Android build, unit tests, emulator and PostgreSQL/Redis tests were NOT RUN.",
+    "Manual focused build workflows were not dispatched because their commands are unchanged and execution is blocked.",
+    "Physical device, providers, signed release and production are outside this CI configuration acceptance and remain unverified.",
+    "Review and explicit merge approval are pending; main unchanged."
+  ]
+}
