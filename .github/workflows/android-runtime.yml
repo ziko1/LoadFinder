@@ -2,6 +2,7 @@ name: Android runtime smoke
 on:
   push:
     branches: [main]
+    tags: ['**']
     paths: ['android/**', '.github/workflows/android-runtime.yml']
   pull_request:
   workflow_dispatch:
