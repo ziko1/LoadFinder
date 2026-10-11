@@ -2,14 +2,18 @@ name: LoadFinder Backend CI
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-ci.yml"
+
+# ci.yml owns automatic backend verification. Keep a focused manual rerun.
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: backend
