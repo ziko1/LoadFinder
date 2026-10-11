@@ -361,3 +361,9 @@ The next implementation priority is the first real exchange provider plus produc
 - Added regression coverage for the Android cloud-build workflow.
 - Preserved v73 Auto Search cancellation and backend CI changes.
 - No remote APK build is claimed until GitHub Actions actually executes.
+
+## Уточнення CI: tag-push coverage
+
+`push.tags: ['**']` відновлює попереднє виконання автоматичних перевірок на tags поряд із `branches: [main]`. Структурна перевірка trigger policy та незмінності job/test commands PASS. Ручні focused lanes і signing/deployment rules не змінено.
+
+Початкова заблокована спроба належить SHA `9ed250fbf89c3b3a09946b862b73dcb322a26fb4`. Новий GitHub configuration SHA — `ebe139568fa239eeb35c2196813ad9669e5ff640`. Зміна tag triggers є зміною workflow, а не docs-only. Application source, test/build commands, database services і signed release збережено. Нове runtime виконання не заявляється; account gate залишається BLOCKED. Follow-up commits позначено `[skip ci]`, без повторної заблокованої спроби. Подальший документаційний коміт змінює лише docs/evidence відносно нового configuration SHA.

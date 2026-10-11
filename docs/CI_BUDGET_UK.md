@@ -1,5 +1,11 @@
 # Розподіл CI LoadFinder
 
+## 2026-10-11 — збереження tag-push перевірок
+
+У кожному автоматичному push workflow додано `tags: ['**']` поруч із `branches: [main]`. Отже, робочі branch pushes не дублюють PR, а попередні tag-push перевірки збережено. Focused manual-only workflows залишаються ручними. GitHub path-фільтри для tag pushes не застосовуються.
+
+Початкова заблокована спроба належить SHA `9ed250fbf89c3b3a09946b862b73dcb322a26fb4`. Новий GitHub configuration SHA — `ebe139568fa239eeb35c2196813ad9669e5ff640`. Зміна tag triggers є зміною workflow, а не docs-only. Application source, test/build commands, database services і signed release збережено. Нове runtime виконання не заявляється; account gate залишається BLOCKED. Follow-up commits позначено `[skip ci]`, без повторної заблокованої спроби. Подальший документаційний коміт змінює лише docs/evidence відносно нового configuration SHA.
+
 ## Де тестуємо
 
 **GitHub Actions / ubuntu-latest** виконує Node.js backend, Android build/unit, Android emulator та PostgreSQL/PostGIS/Redis інтеграцію. Репозиторій містить Android Kotlin/Compose і Node.js/TypeScript, без нативного iOS-проєкту. Окремий Codemagic-проєкт не підключено: автоматичні перевірки залишаються в Linux.
@@ -8,10 +14,10 @@
 
 | Workflow | Автоматично | Вручну |
 |---|---|---|
-| LoadFinder CI | Кожен PR та push main; backend і Android | Повний повтор |
-| Runtime integration | Кожен PR та push main; PostgreSQL/PostGIS + Redis | Повний повтор |
-| Android runtime smoke | Кожен PR; push main за наявними Android path-фільтрами | Emulator smoke |
-| LoadFinder Source Preflight | Кожен PR; push main за наявними source path-фільтрами | Source preflight |
+| LoadFinder CI | Кожен PR, push main та push будь-якого tag; backend і Android | Повний повтор |
+| Runtime integration | Кожен PR, push main та push будь-якого tag; PostgreSQL/PostGIS + Redis | Повний повтор |
+| Android runtime smoke | Кожен PR та push будь-якого tag; push main за наявними Android path-фільтрами | Emulator smoke |
+| LoadFinder Source Preflight | Кожен PR та push будь-якого tag; push main за наявними source path-фільтрами | Source preflight |
 | LoadFinder Android Build | Не запускається автоматично | Debug APK + unit reports |
 | LoadFinder Backend CI | Не запускається автоматично | Окремий backend test/build |
 | Signed Android release | Не запускається автоматично | Існуючий production environment та signing gates |

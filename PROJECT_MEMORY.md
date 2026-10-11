@@ -1,5 +1,11 @@
 # LoadFinder — пам'ять проєкту
 
+## Уточнення tag-push coverage
+
+Початкова заблокована спроба належить SHA `9ed250fbf89c3b3a09946b862b73dcb322a26fb4`. Новий GitHub configuration SHA — `ebe139568fa239eeb35c2196813ad9669e5ff640`. Зміна tag triggers є зміною workflow, а не docs-only. Application source, test/build commands, database services і signed release збережено. Нове runtime виконання не заявляється; account gate залишається BLOCKED. Follow-up commits позначено `[skip ci]`, без повторної заблокованої спроби. Подальший документаційний коміт змінює лише docs/evidence відносно нового configuration SHA.
+
+Trigger validation: PASS — branch main, усі tags, усі наявні PR checks; manual-only focused lanes збережено. Evidence: `evidence/ci-balance-20261011.json`.
+
 ## 2026-10-11 — GitHub / Codemagic
 
 - Репозиторій `ziko1/LoadFinder`, публічний; Android Kotlin/Compose + Node.js/TypeScript. Нативного iOS source у перевіреному дереві немає.
@@ -9,4 +15,4 @@
 - Перевірки: YAML/trigger configuration і структурна незмінність test/build commands, service definitions та signed release — PASS. Запуски 38160764878, 38160764962, 38160764870, 38160764983 заблоковані до runner assignment; 5 jobs, runner_id=0, steps=[]. Поточні тести NOT RUN, runtime readiness BLOCKED.
 - Evidence: `evidence/ci-balance-20261011.json`; інструкція: `docs/CI_BUDGET_UK.md`. Фінансові дані облікового запису в репозиторії не записуються.
 - Наступне: відновити доступність GitHub Actions, перевірити поточний exact SHA, виконати погоджений review/merge залежних PR. Deployment, release signing, live OIDC/Trans.eu/FCM/GPS та device acceptance мають окремі gates із roadmap.
-- Документаційний коміт після CI-кандидата змінює лише docs/evidence; не вважається новим runtime PASS.
+- Початковий docs commit не був новим runtime PASS; пізніший tag-trigger fix має окремий configuration SHA, вказаний вище.

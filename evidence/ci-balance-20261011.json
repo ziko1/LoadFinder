@@ -1,11 +1,11 @@
 {
-  "checked_at_utc": "2026-10-11T17:47:56Z",
+  "checked_at_utc": "2026-10-11T17:53:33.636056+00:00",
   "repository": "ziko1/LoadFinder",
   "scope": "CI allocation and elimination of duplicate automatic build triggers",
   "status": "BLOCKED_FOR_RUNTIME_VERIFICATION",
   "base_branch": "docs/current-readiness-20261008",
   "base_sha": "3d079c316336cc7b5153007e227e58e73fe4297e",
-  "candidate_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+  "candidate_sha": "ebe139568fa239eeb35c2196813ad9669e5ff640",
   "branch": "ci/balance-github-codemagic-20261011",
   "pull_request": "https://github.com/ziko1/LoadFinder/pull/4",
   "depends_on_pull_request": "https://github.com/ziko1/LoadFinder/pull/3",
@@ -27,7 +27,7 @@
         "changed": false
       },
       ".github/workflows/android-runtime.yml": {
-        "sha256": "3759bf042eb67a7dd5fad7eb30b588bdbcdb6d70da6d67ea44d10cc2d4c7c39d",
+        "sha256": "cdf95e616db10147b16b1db09156a41953c18c7e336d1efcde1c9b60e0ccca6d",
         "changed": true
       },
       ".github/workflows/backend-ci.yml": {
@@ -35,29 +35,29 @@
         "changed": true
       },
       ".github/workflows/ci.yml": {
-        "sha256": "1f33cf9df34339bc5ce1594f5224a18e6a5c025fc3d0e573497845b3a961d8a7",
+        "sha256": "81827eeb8a414fa8a1f11547f8a12aa208d29a666333b5aa180f5810ac01dc6a",
         "changed": true
       },
       ".github/workflows/runtime-integration.yml": {
-        "sha256": "ba24fc44da189f5f35d9e8eb18609e7618992aa92f48c7690783fcaa984d1516",
+        "sha256": "62678db54d0a8b935485782ad76743be861de9e4f4b95d53f21f9960335845f7",
         "changed": true
       },
       ".github/workflows/source-preflight.yml": {
-        "sha256": "b93bb8a77d3621e62593aa4a12633c7bcb1be396aa3159a73ac85da423ebe447",
+        "sha256": "d6aa6067fb3db63a6ac7fbe6f189966ad3da1194cea5eccde5d9168ba52626d1",
         "changed": true
       }
     },
     "checks": [
       "YAML parse with duplicate-key rejection: PASS",
       "Existing job names, test/build commands, services, environment and release workflow preserved: PASS",
-      "Automatic push limited to main; pull request checks retain no branch/path exclusions: PASS",
+      "Automatic branch pushes limited to main; all tag pushes retained; pull request checks retain no branch/path exclusions: PASS",
       "Manual debug/backend lanes have no automatic triggers: PASS"
     ],
     "status": "PASS",
+    "configuration_sha": "ebe139568fa239eeb35c2196813ad9669e5ff640",
     "command": "python3 /workspace/scratch/2d9ac8cc9ae9/balance-ci-flux-loadfinder/validate-ci.py",
     "exit_code": 0,
-    "environment": "Python 3.12.14; PyYAML 6.0.3",
-    "note": "One-off structural comparison against fetched exact base workflows; hashes and preserved behavior listed above."
+    "environment": "Python 3.12.14; PyYAML 6.0.3; Bash"
   },
   "runtime_verification": {
     "status": "BLOCKED",
@@ -237,7 +237,8 @@
           }
         ]
       }
-    ]
+    ],
+    "note": "These blocked runs belong to the initial candidate; no runtime execution is claimed for the later tag-trigger configuration."
   },
   "before_duplicate_runs": [
     {
@@ -293,5 +294,71 @@
     "Manual focused build workflows were not dispatched because their commands are unchanged and execution is blocked.",
     "Physical device, providers, signed release and production are outside this CI configuration acceptance and remain unverified.",
     "Review and explicit merge approval are pending; main unchanged."
-  ]
+  ],
+  "initial_ci_candidate_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4",
+  "github_configuration_sha": "ebe139568fa239eeb35c2196813ad9669e5ff640",
+  "previous_configuration_validation": {
+    "base_sha": "3d079c316336cc7b5153007e227e58e73fe4297e",
+    "workflow_files": {
+      ".github/workflows/android-build.yml": {
+        "sha256": "e2f3060bb9beb7b7ea865fbf8bcb33deffcbbb21f88bcbba5628fd7228a82250",
+        "changed": true
+      },
+      ".github/workflows/android-release.yml": {
+        "sha256": "ffd4139f317bc580de0cb84a6ee3549490c44911d8ad7bbce3962cde68305515",
+        "changed": false
+      },
+      ".github/workflows/android-runtime.yml": {
+        "sha256": "3759bf042eb67a7dd5fad7eb30b588bdbcdb6d70da6d67ea44d10cc2d4c7c39d",
+        "changed": true
+      },
+      ".github/workflows/backend-ci.yml": {
+        "sha256": "18802e046d4fbc40c89f81f4e06612be0efa70811118b3b511f5dabd330a547f",
+        "changed": true
+      },
+      ".github/workflows/ci.yml": {
+        "sha256": "1f33cf9df34339bc5ce1594f5224a18e6a5c025fc3d0e573497845b3a961d8a7",
+        "changed": true
+      },
+      ".github/workflows/runtime-integration.yml": {
+        "sha256": "ba24fc44da189f5f35d9e8eb18609e7618992aa92f48c7690783fcaa984d1516",
+        "changed": true
+      },
+      ".github/workflows/source-preflight.yml": {
+        "sha256": "b93bb8a77d3621e62593aa4a12633c7bcb1be396aa3159a73ac85da423ebe447",
+        "changed": true
+      }
+    },
+    "checks": [
+      "YAML parse with duplicate-key rejection: PASS",
+      "Existing job names, test/build commands, services, environment and release workflow preserved: PASS",
+      "Automatic push limited to main; pull request checks retain no branch/path exclusions: PASS",
+      "Manual debug/backend lanes have no automatic triggers: PASS"
+    ],
+    "status": "PASS",
+    "command": "python3 /workspace/scratch/2d9ac8cc9ae9/balance-ci-flux-loadfinder/validate-ci.py",
+    "exit_code": 0,
+    "environment": "Python 3.12.14; PyYAML 6.0.3",
+    "note": "One-off structural comparison against fetched exact base workflows; hashes and preserved behavior listed above."
+  },
+  "tag_coverage_followup": {
+    "previous_documentation_sha": "61d16d86ca1f9099799c45099e3bf2d488afda7f",
+    "github_configuration_sha": "ebe139568fa239eeb35c2196813ad9669e5ff640",
+    "changed_workflows": [
+      ".github/workflows/runtime-integration.yml",
+      ".github/workflows/android-runtime.yml",
+      ".github/workflows/source-preflight.yml",
+      ".github/workflows/ci.yml"
+    ],
+    "change": "Add push.tags: ['**'] alongside branches: [main] to preserve preexisting tag-trigger coverage.",
+    "static_validation": "PASS",
+    "application_tests_dependencies_and_codemagic_scripts_changed": false,
+    "github_workflows_changed_after_previous_runtime_or_attempt": true,
+    "diff_from_previous_runtime_is_documentation_only": false,
+    "tag_push_execution": "NOT RUN; no release tag was created for this configuration check.",
+    "native_rerun": "NOT RUN; application source, test commands and Codemagic scripts did not change.",
+    "current_github_runtime": "BLOCKED by the existing account execution gate; these follow-up commits use [skip ci] rather than generating another blocked run.",
+    "subsequent_documentation_commit": "Documentation and evidence only relative to the new GitHub configuration SHA; verify with the PR commit diff.",
+    "previous_attempted_source_sha": "9ed250fbf89c3b3a09946b862b73dcb322a26fb4"
+  }
 }
