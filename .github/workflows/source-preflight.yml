@@ -3,15 +3,25 @@ name: LoadFinder Source Preflight
 on:
   workflow_dispatch:
   push:
+    branches: [main]
+    tags: ['**']
     paths:
       - "android/**"
       - "backend/**"
       - "ci/**"
       - ".github/workflows/source-preflight.yml"
+  pull_request:
+
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   preflight:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4

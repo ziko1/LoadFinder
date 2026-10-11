@@ -2,14 +2,19 @@ name: LoadFinder Android Build
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "android/**"
-      - ".github/workflows/android-build.yml"
+
+# The automatic debug build and unit tests live in ci.yml. Use this manual
+# workflow when a downloadable debug APK is needed, without a second push build.
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: android
@@ -22,7 +27,6 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-          cache: gradle
 
       - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v6
@@ -45,6 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: loadfinder-debug-apk
+          retention-days: 7
           path: android/app/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
@@ -52,5 +57,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: loadfinder-unit-test-reports
+          retention-days: 7
           path: android/app/app/build/reports/tests/testDebugUnitTest/**
           if-no-files-found: warn

@@ -1,5 +1,13 @@
 # LoadFinder — Product Roadmap & Delivery Status
 
+## 2026-10-11 — розподіл CI
+
+CI-кандидат `9ed250fbf89c3b3a09946b862b73dcb322a26fb4` у PR #4 поверх PR #3: GitHub Ubuntu для Android/backend/emulator/DB, автоматичний push лише main, скасування застарілих PR runs, обмеження часу й 7-денні debug/runtime artifacts. Дублюючі focused Android/backend workflows доступні вручну; signed release та всі канонічні test/build команди збережено. Codemagic для цього Android/Node репозиторію не підключений.
+
+Статична перевірка конфігурації PASS. Runtime-перевірка **BLOCKED**: чотири свіжі workflows, п'ять jobs відхилені до runner assignment (`runner_id=0`, `steps=[]`) account gate провайдера. Тестові результати поточного SHA не отримані. Потрібно відновити доступність GitHub Actions і перевірити exact поточний SHA. Основна гілка та product readiness не змінені.
+
+Докази: `evidence/ci-balance-20261011.json`; інструкція: `docs/CI_BUDGET_UK.md`; пам'ять: `PROJECT_MEMORY.md`. Review/merge pending; ці зміни не закривають live/device/release gates нижче.
+
 ## 2026-10-08 — перевірка й порядок завершення
 
 Перевірений source SHA `2e4ba5928caa80cdc0d6a024dd5f7aebd20ee16f`. `npm ci`, `npm test`, `npm run build`: PASS; 56 тестів PASS, 3 integration cases SKIPPED через неналаштовані PostgreSQL/Redis. Пропуски не є успіхом. Свіжої Android/device/live перевірки не виконано.
@@ -353,3 +361,9 @@ The next implementation priority is the first real exchange provider plus produc
 - Added regression coverage for the Android cloud-build workflow.
 - Preserved v73 Auto Search cancellation and backend CI changes.
 - No remote APK build is claimed until GitHub Actions actually executes.
+
+## Уточнення CI: tag-push coverage
+
+`push.tags: ['**']` відновлює попереднє виконання автоматичних перевірок на tags поряд із `branches: [main]`. Структурна перевірка trigger policy та незмінності job/test commands PASS. Ручні focused lanes і signing/deployment rules не змінено.
+
+Початкова заблокована спроба належить SHA `9ed250fbf89c3b3a09946b862b73dcb322a26fb4`. Новий GitHub configuration SHA — `ebe139568fa239eeb35c2196813ad9669e5ff640`. Зміна tag triggers є зміною workflow, а не docs-only. Application source, test/build commands, database services і signed release збережено. Нове runtime виконання не заявляється; account gate залишається BLOCKED. Follow-up commits позначено `[skip ci]`, без повторної заблокованої спроби. Подальший документаційний коміт змінює лише docs/evidence відносно нового configuration SHA.
