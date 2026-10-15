@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "policy_id": "UPS-100",
+  "status": "UNMEASURED",
+  "project_id": "loadfinder",
+  "repository": "ziko1/LoadFinder",
+  "environment": "NOT_MEASURED",
+  "commit_sha": null,
+  "artifact_sha256": null,
+  "run_at_utc": null,
+  "device": null,
+  "network_profile": null,
+  "cache_mode": null,
+  "sample_count": 0,
+  "journeys": [
+    {
+      "id": "UI-A",
+      "class": "A",
+      "operation": "CRITICAL_USER_ACTION_TO_IDENTIFY",
+      "sli": "action_to_first_meaningful_paint_ms",
+      "threshold_type": "internal_hard_target",
+      "target": {
+        "p95_lte_ms": 100
+      },
+      "measurement_source": null,
+      "sample_count": 0,
+      "observed": {
+        "p50": null,
+        "p75": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      },
+      "result": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "MOB-OFFLINE-B",
+      "class": "B",
+      "operation": "OFFLINE_LOCAL_DRAFT_RESPONSE_TO_IDENTIFY",
+      "sli": "action_to_first_meaningful_paint_ms",
+      "threshold_type": "internal_hard_target",
+      "target": {
+        "p95_lte_ms": 100
+      },
+      "measurement_source": null,
+      "sample_count": 0,
+      "observed": {
+        "p50": null,
+        "p75": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      },
+      "result": "NOT_RUN",
+      "evidence": null
+    }
+  ],
+  "security_review": "NOT_RUN",
+  "independent_review": "NOT_RUN",
+  "live_verified": false,
+  "device_verified": false,
+  "notes": "Placeholder journeys are discovery tasks, not proof that the route or UI exists. Expected daily gate: UNKNOWN. For Android/iOS startup, battery and frame traces, separate profilers and devices are mandatory."
+}
